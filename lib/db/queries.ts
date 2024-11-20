@@ -1,19 +1,21 @@
 // lib/db/operations.ts
 import { eq } from "drizzle-orm";
-import { generateEmbedding, generateSearchTerms } from "../ai/embedding";
-import { PreparedProduct, ScrapedProduct } from "../types";
-import { db } from "./drizzle";
-import { Product, ProductMetadata, products } from "./schema";
 import "server-only";
+import { generateEmbedding } from "../ai/embedding";
+import { PreparedProduct, ProductMetadata, ScrapedProduct } from "../types";
+import { generateSearchTerms } from "../utils";
+import { db } from "./drizzle";
+import { Product, products } from "./schema";
+
 // Helper to convert number to decimal string
 function formatPrice(price: number | null): string | null {
   if (price === null) return null;
   return price.toFixed(2);
 }
 
-// Prepare product data for database
+// Prepare product data for database. Generate embedding and search terms
 export async function prepareProductForDB(
-  product: ScrapedProduct & { metadata: ProductMetadata }
+  product: ScrapedProduct & { metadata: ProductMetadata },
 ): Promise<PreparedProduct> {
   const embedding = await generateEmbedding(product.metadata);
   const searchTerms = generateSearchTerms(product.metadata);

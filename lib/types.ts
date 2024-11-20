@@ -5,6 +5,7 @@ export const FurnitureMetadataSchema = z.object({
     .string()
     .describe("Vallitseva tyyli (esim. moderni, skandinaavinen, teollinen)"),
   materials: z.array(z.string()).describe("Päämateriaalit listana"),
+  category: z.string().describe("Tuotekategoria"),
   colors: z.array(z.string()).describe("Päävärit ja sävyt listana"),
   roomType: z.array(z.string()).describe("Sopivat huoneet/tilat listana"),
   functionalFeatures: z

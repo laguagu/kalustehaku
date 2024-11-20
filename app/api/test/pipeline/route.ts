@@ -1,12 +1,14 @@
-import { processProducts } from "@/lib/product-pipeline";
+import { processProducts, PRODUCT_URLS } from "@/lib/product-pipeline";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  try {
-    const testUrl =
-      "https://www.tavaratrading.com/toimistokalusteet/48/sahkopoydat";
+  const testUrls = PRODUCT_URLS.slice(0, 2);
 
-    const results = await processProducts(testUrl);
+  try {
+    const results = await processProducts({
+      urls: testUrls,
+      productsPerUrl: 1,
+    });
 
     return NextResponse.json({
       success: true,
@@ -19,7 +21,7 @@ export async function GET() {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

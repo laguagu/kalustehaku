@@ -1,9 +1,9 @@
 // lib/ai/embeddings.ts
 import OpenAI from "openai";
-import { ProductMetadata } from "../db/schema";
+import { ProductMetadata } from "../types";
 
 export async function generateEmbedding(
-  metadata: ProductMetadata
+  metadata: ProductMetadata,
 ): Promise<number[]> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -29,19 +29,4 @@ export async function generateEmbedding(
     console.error("Error generating embedding:", error);
     throw error;
   }
-}
-
-export function generateSearchTerms(metadata: ProductMetadata): string {
-  const terms = [
-    metadata.style,
-    ...metadata.materials,
-    ...metadata.colors,
-    ...metadata.roomType,
-    ...metadata.functionalFeatures,
-    metadata.designStyle,
-    metadata.condition,
-    ...metadata.suitableFor,
-  ];
-
-  return terms.join(" ").toLowerCase();
 }

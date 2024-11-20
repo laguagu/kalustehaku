@@ -1,5 +1,4 @@
-// app/api/scrape/route.ts
-import { processProducts } from "@/lib/product-pipeline";
+import { processProducts, PRODUCT_URLS } from "@/lib/product-pipeline";
 import { NextResponse } from "next/server";
 
 // Basic auth middleware
@@ -29,17 +28,64 @@ const basicAuth = async (request: Request) => {
   return null;
 };
 
+// Verify CRON request
+const verifyCron = (request: Request) => {
+  const authHeader = request.headers.get("Authorization");
+  return authHeader === `Bearer ${process.env.CRON_SECRET}`;
+};
+
+// Process helper with logging
+async function runProcessing(options?: {
+  urls?: string[];
+  productsPerUrl?: number;
+  isCron?: boolean;
+}) {
+  const startTime = Date.now();
+  const processType = options?.isCron ? "CRON" : "Manual";
+
+  console.log(
+    `[${processType} Processing] Starting at ${new Date().toISOString()}`,
+  );
+  console.log(
+    `URLs to process: ${options?.urls?.length || PRODUCT_URLS.length}`,
+  );
+  console.log(`Products per URL: ${options?.productsPerUrl}`);
+
+  try {
+    const results = await processProducts({
+      urls: options?.urls,
+      productsPerUrl: options?.productsPerUrl,
+    });
+
+    const duration = (Date.now() - startTime) / 1000;
+    console.log(`[${processType} Processing] Completed in ${duration}s`);
+    console.log(`Processed: ${results.scraping.totalProcessed}`);
+    console.log(`Successful: ${results.scraping.successful}`);
+    console.log(`Failed: ${results.scraping.failed}`);
+
+    return results;
+  } catch (error) {
+    console.error(`[${processType} Processing] Failed:`, error);
+    throw error;
+  }
+}
+
+// POST endpoint for manual processing with options
 export async function POST(request: Request) {
   try {
-    // Check authentication
     const authResponse = await basicAuth(request);
     if (authResponse) return authResponse;
 
-    // Get URL from request body if provided
+    // Parse request body
     const body = await request.json().catch(() => ({}));
-    const url = body.url;
+    const { urls, productsPerUrl } = body;
 
-    const results = await processProducts(url);
+    const results = await runProcessing({
+      urls,
+      productsPerUrl,
+      isCron: false,
+    });
+
     return NextResponse.json({
       success: true,
       data: results,
@@ -56,22 +102,23 @@ export async function POST(request: Request) {
   }
 }
 
-// GET endpoint for status check and CRON
+// GET endpoint for CRON jobs
 export async function GET(request: Request) {
-  // Verify that this is a CRON request
-  const authHeader = request.headers.get("Authorization");
-
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // First check if it's a CRON request
+  if (!verifyCron(request)) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
   try {
-    const results = await processProducts();
+    // CRON jobs process all URLs with default settings
+    const results = await runProcessing({ isCron: true });
+
     return NextResponse.json({
       success: true,
       data: results,
     });
   } catch (error) {
+    console.error("CRON error:", error);
     return NextResponse.json(
       {
         success: false,

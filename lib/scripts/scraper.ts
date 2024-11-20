@@ -5,16 +5,13 @@ import path from "path";
 import puppeteer, { ElementHandle } from "puppeteer";
 import { ScrapedProduct } from "../types";
 
-const TEST_URL =
-  "https://www.tavaratrading.com/toimistokalusteet/1/tyo-satula-ja-valvomotuolit";
-
 // Helper function to convert thumbnail URL to big image URL
 function convertToBigImageUrl(url: string): string {
   return url.replace("/images_thumb/", "/images_thumb_big/");
 }
 
 async function safeGetProductUrl(
-  element: ElementHandle
+  element: ElementHandle,
 ): Promise<string | null> {
   try {
     const url = await element.$eval(".nimi a", (el) => {
@@ -31,14 +28,14 @@ async function safeGetProductUrl(
 // Helper function to safely get element text
 async function safeGetText(
   element: ElementHandle,
-  selector: string
+  selector: string,
 ): Promise<string | null> {
   try {
     const el = await element.$(selector);
     if (!el) return null;
     const text = await element.$eval(
       selector,
-      (el) => el.textContent?.trim() || ""
+      (el) => el.textContent?.trim() || "",
     );
     return text;
   } catch (error) {
@@ -50,7 +47,7 @@ async function safeGetText(
 async function safeGetAttribute(
   element: ElementHandle,
   selector: string,
-  attribute: string
+  attribute: string,
 ): Promise<string | null> {
   try {
     const el = await element.$(selector);
@@ -67,7 +64,7 @@ async function safeGetAttribute(
         // Jos data-src ei löydy, käytä normaalia src
         return el.getAttribute(attr) || "";
       },
-      attribute
+      attribute,
     );
     return value;
   } catch (error) {
@@ -81,14 +78,14 @@ function safeParsePrice(priceText: string | null): number | null {
   try {
     if (!priceText) return null;
     const number = parseFloat(
-      priceText.replace(/[^0-9.,]/g, "").replace(",", ".")
+      priceText.replace(/[^0-9.,]/g, "").replace(",", "."),
     );
     return isNaN(number) ? null : number;
   } catch (error) {
     return null;
   }
 }
-
+// Scrapes only used products from the given URL
 export async function scrapeProducts(url: string): Promise<ScrapedProduct[]> {
   try {
     console.log("Launching browser...");
@@ -146,7 +143,7 @@ export async function scrapeProducts(url: string): Promise<ScrapedProduct[]> {
           id:
             (await safeGetAttribute(element, ".kuva a", "name"))?.replace(
               "product_",
-              ""
+              "",
             ) || "",
           name,
           description: await safeGetText(element, ".subtitle"),
@@ -157,13 +154,6 @@ export async function scrapeProducts(url: string): Promise<ScrapedProduct[]> {
           availability: (await safeGetText(element, ".availability p")) || "",
           productUrl: productUrl || "",
         };
-
-        console.log("Scraped product:", {
-          name: product.name,
-          imageUrl: product.imageUrl,
-          price: product.price,
-          productUrl: product.productUrl,
-        });
 
         if (product.id && product.name) {
           products.push(product);
@@ -182,6 +172,10 @@ export async function scrapeProducts(url: string): Promise<ScrapedProduct[]> {
     return [];
   }
 }
+
+const TEST_URL =
+  "https://www.tavaratrading.com/toimistokalusteet/194/korkeat-poydat-ja-tuolit";
+
 export async function main() {
   try {
     const products = await scrapeProducts(TEST_URL);

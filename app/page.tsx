@@ -66,7 +66,7 @@ export default function TavaraTradingSearch() {
       setHasSearched(true);
       const searchResults = await searchFurniture(searchQuery, {
         minSimilarity: 0.3,
-        maxResults: 5
+        maxResults: 5,
       });
       setResults(searchResults);
       setError(null);
@@ -93,8 +93,8 @@ export default function TavaraTradingSearch() {
             Löydä täydellinen huonekalu
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Etsi käytettyjä huonekaluja kuvailemalla mitä etsit. Tekoäly auttaa löytämään 
-            toiveitasi vastaavat huonekalut.
+            Etsi käytettyjä huonekaluja kuvailemalla mitä etsit. Tekoäly auttaa
+            löytämään toiveitasi vastaavat huonekalut.
           </p>
         </div>
 
@@ -117,7 +117,11 @@ export default function TavaraTradingSearch() {
                   onChange={handleQueryChange}
                   className="flex-1"
                 />
-                <div className={!query.trim() ? "pointer-events-none opacity-50" : ""}>
+                <div
+                  className={
+                    !query.trim() ? "pointer-events-none opacity-50" : ""
+                  }
+                >
                   <SearchButton />
                 </div>
               </div>
@@ -135,10 +139,10 @@ export default function TavaraTradingSearch() {
           <div className="pt-8">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">
-                Löydetyt huonekalut
+                Löydetyt käytetyt huonekalut
               </h2>
               <p className="text-gray-500">
-                {results.length} {results.length === 1 ? 'tulos' : 'tulosta'}
+                {results.length} {results.length === 1 ? "tulos" : "tulosta"}
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

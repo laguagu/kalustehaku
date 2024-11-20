@@ -8,18 +8,7 @@ import {
   timestamp,
   vector,
 } from "drizzle-orm/pg-core";
-
-export type ProductMetadata = {
-  style: string;
-  materials: string[];
-  colors: string[];
-  roomType: string[];
-  functionalFeatures: string[];
-  designStyle: string;
-  condition: string;
-  suitableFor: string[];
-  visualDescription: string;
-};
+import { ProductMetadata } from "../types";
 
 export const products = pgTable("products", {
   id: text("id").primaryKey(),

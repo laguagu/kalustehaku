@@ -1,20 +1,22 @@
 // scripts/test-pipeline.ts
 import dotenv from "dotenv";
-import { processProducts } from "../product-pipeline";
+import { processProducts, PRODUCT_URLS } from "../product-pipeline";
+
 dotenv.config({ path: ".env.local" });
 
 async function testPipeline() {
   try {
     console.log("Starting pipeline test...");
 
-    // Testaa yhdellä URL:lla
-    const testUrl =
-      "https://www.tavaratrading.com/toimistokalusteet/1/tyo-satula-ja-valvomotuolit";
+    // Testaa kahta ensimmäistä kategoriaa
+    const testUrls = PRODUCT_URLS.slice(0, 2);
 
-    const results = await processProducts(testUrl);
+    const results = await processProducts({
+      urls: testUrls,
+      productsPerUrl: 2,
+    });
 
-    console.log("\nPipeline results:");
-    console.log(JSON.stringify(results, null, 2));
+    console.log("\nPipeline results:", JSON.stringify(results, null, 2));
   } catch (error) {
     console.error("Pipeline test failed:", error);
   }

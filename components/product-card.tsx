@@ -18,7 +18,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         "bg-white hover:bg-gray-50",
         isBestMatch
           ? "ring-2 ring-green-500 shadow-md"
-          : "shadow-sm hover:shadow-md"
+          : "shadow-sm hover:shadow-md",
       )}
     >
       <Link
