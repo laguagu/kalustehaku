@@ -72,8 +72,10 @@ USING hnsw (embedding vector_cosine_ops);
 
 -- Funktio semanttista hakua varten
 create or replace function match_furniture (
-  query_embedding vector(1536)
-)
+  query_embedding vector(1536),
+  match_threshold float,
+  match_count int
+) 
 returns table (
   id text,
   name text,
@@ -83,7 +85,8 @@ returns table (
   condition text,
   metadata jsonb,
   similarity float
-) language plpgsql as $$
+)
+language plpgsql as $$
 BEGIN
   RETURN QUERY
   SELECT
@@ -96,9 +99,9 @@ BEGIN
     products.metadata::jsonb,
     1 - (products.embedding <=> query_embedding) as similarity
   FROM products
-  WHERE 1 - (products.embedding <=> query_embedding)
+  WHERE 1 - (products.embedding <=> query_embedding) > match_threshold
   ORDER BY similarity DESC
-  LIMIT 3;
+  LIMIT match_count;
 END;
 $$;
 ```
