@@ -283,4 +283,4 @@ export async function searchFurniture(
 
 ## Lisenssi
 
-MIT
+MIT License - katso [LICENSE](LICENSE) tiedosto lisätietoja varten.
