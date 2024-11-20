@@ -25,6 +25,7 @@ export interface SearchResult {
     style: string;
     materials: string[];
     colors: string[];
+    category: string;
     roomType: string[];
     functionalFeatures: string[];
     designStyle: string;

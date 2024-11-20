@@ -18,7 +18,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         "bg-white hover:bg-gray-50",
         isBestMatch
           ? "ring-2 ring-green-500 shadow-md"
-          : "shadow-sm hover:shadow-md",
+          : "shadow-sm hover:shadow-md"
       )}
     >
       <Link
@@ -54,26 +54,39 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         </div>
 
         <CardContent className="p-4 space-y-4">
-          {/* Otsikko ja hinta */}
-          <div>
-            <h3 className="font-semibold text-lg line-clamp-3 mb-2">
-              {result.name}
-            </h3>
+          {/* Otsikko, kategoria ja hinta */}
+          <div className="space-y-2">
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="font-semibold text-lg line-clamp-3">
+                {result.name}
+              </h3>
+            </div>
             <div className="flex justify-between items-center">
               <span className="text-xl font-bold text-green-600">
                 {result.price ? `${result.price} €` : "Hinta ei saatavilla"}
               </span>
-              <Badge variant="outline" className="capitalize">
-                {result.condition}
+              <Badge
+                variant={result.similarity > 0.8 ? "default" : "secondary"}
+                className={cn(
+                  "shadow-sm whitespace-nowrap",
+                  isBestMatch && "bg-green-500"
+                )}
+              >
+                {result.metadata.category && (
+                  <span className="capitalize">{result.metadata.category}</span>
+                )}
               </Badge>
             </div>
           </div>
 
           {/* Tuotteen kuvaus */}
           {result.metadata.visualDescription && (
-            <p className="text-sm text-gray-600 line-clamp-3">
-              {result.metadata.visualDescription}
-            </p>
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-black">Tekoälyn kuvaus tuotteesta:</p>
+              <p className="text-sm text-gray-600 line-clamp-8">
+                {result.metadata.visualDescription}
+              </p>
+            </div>
           )}
 
           {/* Tyyli ja design */}
