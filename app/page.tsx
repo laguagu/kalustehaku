@@ -66,8 +66,8 @@ export default function TavaraTradingSearch() {
     try {
       setHasSearched(true);
       const searchResults = await searchFurniture(searchQuery, {
-        minSimilarity: 0.3,
-        maxResults: 5,
+        minSimilarity: 0.25,
+        maxResults: 6,
       });
       setResults(searchResults);
       setError(null);
