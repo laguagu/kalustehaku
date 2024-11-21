@@ -283,3 +283,7 @@ export async function searchFurniture(
 ## Lisenssi
 
 MIT License - katso [LICENSE](LICENSE) tiedosto lisätietoja varten.
+
+## Sovelluksen vieminen Rahtiin
+
+Sovelluksen tai uuden version vieminen Rahtiin onnistuu seuraamalla pushToRahti.txt tiedostossa olevia ohjeita. Tiedosto sisältää tarvittavat komennot ja vaiheet, jotka tulee suorittaa mikäli uuden lokaalin version haluaa viedä Rahti 2 palveluun.
