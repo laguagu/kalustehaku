@@ -28,7 +28,7 @@ Semanttinen hakusovellus käytetyille huonekaluille, joka hyödyntää OpenAI:n 
 
 ```bash
 git clone https://github.com/laguagu/tavaratrading-embeddings
-cd furniture-web-search
+cd tavaratrading-embeddings
 ```
 
 2. Asenna riippuvuudet:
