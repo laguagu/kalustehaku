@@ -1,4 +1,4 @@
-# Furniture Web Search
+# Tavaratrading Embeddings
 
 Semanttinen hakusovellus käytetyille huonekaluille, joka hyödyntää OpenAI:n embeddings-teknologiaa ja Supabasen vektorihakua. Sovellus web-screippaa huonekalut Tavaratrading-sivustolta ja mahdollistaa sisustussuunnittelijoille tarkan semanttisen haun.
 
