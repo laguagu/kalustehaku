@@ -1,4 +1,3 @@
-// lib/product-pipeline.ts
 import { scrapeProducts } from "@/lib/scripts/scraper";
 import pLimit from "p-limit";
 import { analyzeProduct } from "./ai/product-analyzer";
@@ -16,20 +15,21 @@ const RATE_LIMIT_DELAY = 1000; // 1 sekunti OpenAI pyyntöjen välillä
 // Apufunktio odottamiseen
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Käsiteltävät URL:it. Ellei annettu parametrina, käytetään oletusarvoja. Poista kommentit käyttääksesi kaikkia kategorioita.
 export const PRODUCT_URLS = [
   "https://www.tavaratrading.com/toimistokalusteet/48/sahkopoydat",
-  "https://www.tavaratrading.com/toimistokalusteet/1/tyo-satula-ja-valvomotuolit",
-  "https://www.tavaratrading.com/toimistokalusteet/4/tyopoydat",
-  "https://www.tavaratrading.com/toimistokalusteet/7/sailytys",
-  "https://www.tavaratrading.com/toimistokalusteet/10/neuvottelupoydat-ja-tuolit",
-  "https://www.tavaratrading.com/toimistokalusteet/194/korkeat-poydat-ja-tuolit",
-  "https://www.tavaratrading.com/toimistokalusteet/13/sohvat-nojatuolit-penkit-ja-rahit",
-  "https://www.tavaratrading.com/toimistokalusteet/189/sohvapoydat-pikku-poydat-ja-jakkarat",
-  "https://www.tavaratrading.com/toimistokalusteet/14/sermit-ja-akustiikka",
-  "https://www.tavaratrading.com/toimistokalusteet/37/valaisimet",
-  "https://www.tavaratrading.com/toimistokalusteet/67/matot",
-  "https://www.tavaratrading.com/toimistokalusteet/17/lisavarusteet",
-  "https://www.tavaratrading.com/toimistokalusteet/110/ravintolakalusteet",
+  // "https://www.tavaratrading.com/toimistokalusteet/1/tyo-satula-ja-valvomotuolit",
+  // "https://www.tavaratrading.com/toimistokalusteet/4/tyopoydat",
+  // "https://www.tavaratrading.com/toimistokalusteet/7/sailytys",
+  // "https://www.tavaratrading.com/toimistokalusteet/10/neuvottelupoydat-ja-tuolit",
+  // "https://www.tavaratrading.com/toimistokalusteet/194/korkeat-poydat-ja-tuolit",
+  // "https://www.tavaratrading.com/toimistokalusteet/13/sohvat-nojatuolit-penkit-ja-rahit",
+  // "https://www.tavaratrading.com/toimistokalusteet/189/sohvapoydat-pikku-poydat-ja-jakkarat",
+  // "https://www.tavaratrading.com/toimistokalusteet/14/sermit-ja-akustiikka",
+  // "https://www.tavaratrading.com/toimistokalusteet/37/valaisimet",
+  // "https://www.tavaratrading.com/toimistokalusteet/67/matot",
+  // "https://www.tavaratrading.com/toimistokalusteet/17/lisavarusteet",
+  // "https://www.tavaratrading.com/toimistokalusteet/110/ravintolakalusteet",
 ];
 
 async function processProduct(

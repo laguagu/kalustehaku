@@ -1,4 +1,3 @@
-//lib/db/schema.ts
 import { sql } from "drizzle-orm";
 import {
   decimal,

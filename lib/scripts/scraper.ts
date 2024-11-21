@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// scripts/scraper.ts
 import fs from "fs";
 import path from "path";
 import puppeteer, { ElementHandle } from "puppeteer";
@@ -121,7 +120,7 @@ export async function scrapeProducts(url: string): Promise<ScrapedProduct[]> {
         // Haetaan tuotteen URL
         const productUrl = await safeGetProductUrl(element);
 
-        // Hae kuvan URL uudella tavalla
+        // Hae kuvan URL ja muunna se isoksi kuvaksi
         const imageUrl = await element
           .$eval(".kuva img", (img) => {
             const dataSrc = img.getAttribute("data-src");

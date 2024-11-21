@@ -1,7 +1,6 @@
 import { processProducts, PRODUCT_URLS } from "@/lib/product-pipeline";
 import { NextResponse } from "next/server";
 
-// Basic auth middleware
 const basicAuth = async (request: Request) => {
   const authHeader = request.headers.get("authorization");
 
@@ -26,12 +25,6 @@ const basicAuth = async (request: Request) => {
   }
 
   return null;
-};
-
-// Verify CRON request
-const verifyCron = (request: Request) => {
-  const authHeader = request.headers.get("Authorization");
-  return authHeader === `Bearer ${process.env.CRON_SECRET}`;
 };
 
 // Process helper with logging
@@ -102,29 +95,35 @@ export async function POST(request: Request) {
   }
 }
 
+// Verify CRON request
+// const verifyCron = (request: Request) => {
+//   const authHeader = request.headers.get("Authorization");
+//   return authHeader === `Bearer ${process.env.CRON_SECRET}`;
+// };
+
 // GET endpoint for CRON jobs
-export async function GET(request: Request) {
-  // First check if it's a CRON request
-  if (!verifyCron(request)) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
+// export async function GET(request: Request) {
 
-  try {
-    // CRON jobs process all URLs with default settings
-    const results = await runProcessing({ isCron: true });
+//   if (!verifyCron(request)) {
+//     return new NextResponse("Unauthorized", { status: 401 });
+//   }
 
-    return NextResponse.json({
-      success: true,
-      data: results,
-    });
-  } catch (error) {
-    console.error("CRON error:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    );
-  }
-}
+//   try {
+//     // CRON jobs process all URLs with default settings
+//     const results = await runProcessing({ isCron: true });
+
+//     return NextResponse.json({
+//       success: true,
+//       data: results,
+//     });
+//   } catch (error) {
+//     console.error("CRON error:", error);
+//     return NextResponse.json(
+//       {
+//         success: false,
+//         error: error instanceof Error ? error.message : "Unknown error",
+//       },
+//       { status: 500 },
+//     );
+//   }
+// }

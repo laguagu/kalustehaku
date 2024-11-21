@@ -55,7 +55,7 @@ SCRAPER_PASSWORD=          # Web scraping API:n salasana (Määrittele salasana)
 DATABASE_URL=              # PostgreSQL yhteysosoite
 ```
 
-## Tietokannan alustus
+## Tietokannan alustus (ellei ole tehty)
 
 ### 1. PostgreSQL Laajennukset ja Indeksit
 
@@ -75,7 +75,7 @@ create or replace function match_furniture (
   query_embedding vector(1536),
   match_threshold float,
   match_count int
-) 
+)
 returns table (
   id text,
   name text,
@@ -236,7 +236,7 @@ export default function TavaraTradingSearch() {
 ```typescript
 // app/actions.ts
 export async function generateSearchEmbedding(
-  searchText: string
+  searchText: string,
 ): Promise<number[]> {
   const response = await openai.embeddings.create({
     model: "text-embedding-3-small",
@@ -255,7 +255,7 @@ export async function searchFurniture(
   options: {
     minSimilarity?: number;
     maxResults?: number;
-  } = {}
+  } = {},
 ) {
   const embedding = await generateSearchEmbedding(searchQuery);
   const { data } = await supabase.rpc("match_furniture", {

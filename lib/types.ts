@@ -21,7 +21,6 @@ export const FurnitureMetadataSchema = z.object({
     .describe("Yksityiskohtainen visuaalinen kuvaus huonekalusta"),
 });
 
-// Export the inferred type from Zod schema
 export type ProductMetadata = z.infer<typeof FurnitureMetadataSchema>;
 
 export interface ScrapedProduct {

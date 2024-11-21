@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { ProductMetadata } from "../types";
 
 export async function generateEmbedding(
-  metadata: ProductMetadata
+  metadata: ProductMetadata,
 ): Promise<number[]> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,

@@ -1,4 +1,3 @@
-// lib/db/operations.ts
 import { eq } from "drizzle-orm";
 import "server-only";
 import { generateEmbedding } from "../ai/embedding";
