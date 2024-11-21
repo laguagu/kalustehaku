@@ -1,4 +1,4 @@
-# Furniture Web Search
+# Tavaratrading Embeddings
 
 Semanttinen hakusovellus käytetyille huonekaluille, joka hyödyntää OpenAI:n embeddings-teknologiaa ja Supabasen vektorihakua. Sovellus web-screippaa huonekalut Tavaratrading-sivustolta ja mahdollistaa sisustussuunnittelijoille tarkan semanttisen haun.
 
@@ -27,8 +27,8 @@ Semanttinen hakusovellus käytetyille huonekaluille, joka hyödyntää OpenAI:n 
 1. Kloonaa repositorio:
 
 ```bash
-git clone [https://github.com/laguagu/furniture-web-search]
-cd furniture-web-search
+git clone https://github.com/laguagu/tavaratrading-embeddings
+cd tavaratrading-embeddings
 ```
 
 2. Asenna riippuvuudet:
@@ -54,6 +54,15 @@ SCRAPER_USERNAME=          # Web scraping API:n käyttäjätunnus (Määrittele 
 SCRAPER_PASSWORD=          # Web scraping API:n salasana (Määrittele salasana)
 DATABASE_URL=              # PostgreSQL yhteysosoite
 ```
+### Kehitys
+
+1. Käynnistä kehityspalvelin:
+
+```bash
+npm run dev
+```
+
+2. Avaa [http://localhost:3000](http://localhost:3000)
 
 ## Tietokannan alustus (ellei ole tehty)
 
@@ -150,16 +159,6 @@ curl -X POST http://localhost:3000/api/scrape \
   -H "Content-Type: application/json" \
   -d '{"urls": ["https://www.tavaratrading.com/..."], "productsPerUrl": 10}'
 ```
-
-### Kehitys
-
-1. Käynnistä kehityspalvelin:
-
-```bash
-npm run dev
-```
-
-2. Avaa [http://localhost:3000](http://localhost:3000)
 
 ## Projektin rakenne
 
