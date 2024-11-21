@@ -54,6 +54,15 @@ SCRAPER_USERNAME=          # Web scraping API:n käyttäjätunnus (Määrittele 
 SCRAPER_PASSWORD=          # Web scraping API:n salasana (Määrittele salasana)
 DATABASE_URL=              # PostgreSQL yhteysosoite
 ```
+### Kehitys
+
+1. Käynnistä kehityspalvelin:
+
+```bash
+npm run dev
+```
+
+2. Avaa [http://localhost:3000](http://localhost:3000)
 
 ## Tietokannan alustus (ellei ole tehty)
 
@@ -150,16 +159,6 @@ curl -X POST http://localhost:3000/api/scrape \
   -H "Content-Type: application/json" \
   -d '{"urls": ["https://www.tavaratrading.com/..."], "productsPerUrl": 10}'
 ```
-
-### Kehitys
-
-1. Käynnistä kehityspalvelin:
-
-```bash
-npm run dev
-```
-
-2. Avaa [http://localhost:3000](http://localhost:3000)
 
 ## Projektin rakenne
 
