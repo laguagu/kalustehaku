@@ -7,7 +7,7 @@ import {
   timestamp,
   vector,
 } from "drizzle-orm/pg-core";
-import { ProductMetadata } from "../types";
+import { ProductMetadata } from "../types/metadata/metadata";
 
 export const products = pgTable("products", {
   id: text("id").primaryKey(),

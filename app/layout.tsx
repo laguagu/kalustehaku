@@ -14,17 +14,19 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tavaratrading-embeddings-alyakokeilut.2.rahtiapp.fi'),
+  metadataBase: new URL(
+    "https://tavaratrading-embeddings-alyakokeilut.2.rahtiapp.fi",
+  ),
   title: "Tavaratrading - Tekoälyhaku",
   description: "Hae käytettyjä huonekaluja teköälyn avulla",
   openGraph: {
-    title: 'Tavaratrading - Tekoälyhaku',
-    description: 'Tekoälyn avulla huonekaluja',
-    images: ['/android-chrome-512x512.png'],
+    title: "Tavaratrading - Tekoälyhaku",
+    description: "Tekoälyn avulla huonekaluja",
+    images: ["/android-chrome-512x512.png"],
   },
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
 };
 

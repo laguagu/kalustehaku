@@ -6,7 +6,8 @@ import {
   prepareProductForDB,
   upsertProduct,
 } from "./db/queries";
-import { PipelineResults, ProductMetadata, ScrapedProduct } from "./types";
+import { ProductMetadata } from "./types/metadata/metadata";
+import { PipelineResults, ScrapedProduct } from "./types/products/types";
 
 const MAX_CONCURRENT_URLS = 3; // Montako URL:ää käsitellään rinnakkain
 const MAX_CONCURRENT_PRODUCTS = 5; // Montako tuotetta per URL käsitellään rinnakkain

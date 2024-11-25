@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
 import "server-only";
 import { generateEmbedding } from "../ai/embedding";
-import { PreparedProduct, ProductMetadata, ScrapedProduct } from "../types";
+import { ProductMetadata } from "../types/metadata/metadata";
+import { PreparedProduct, ScrapedProduct } from "../types/products/types";
 import { generateSearchTerms } from "../utils";
 import { db } from "./drizzle";
 import { Product, products } from "./schema";

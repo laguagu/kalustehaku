@@ -3,7 +3,7 @@ import axios from "axios";
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { FurnitureMetadataSchema } from "../types";
+import { FurnitureMetadataSchema } from "../types/metadata/metadata";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

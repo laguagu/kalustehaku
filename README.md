@@ -2,8 +2,6 @@
 
 Semanttinen hakusovellus käytetyille huonekaluille, joka hyödyntää OpenAI:n embeddings-teknologiaa ja Supabasen vektorihakua. Sovellus web-screippaa huonekalut Tavaratrading-sivustolta ja mahdollistaa sisustussuunnittelijoille tarkan semanttisen haun.
 
-
-
 ## Ominaisuudet
 
 - 🔍 Semanttinen haku OpenAI embeddings -teknologialla
@@ -66,7 +64,7 @@ Supabase ympäristömuuttujat saat haettua kun olet luonut projektin [Supabase](
 Tarvittavat ympäristömuuttujat:
 
 - `DATABASE_URL`: Löytyy kohdasta "Database" -> "Connection string"
-- `SUPABASE_PRIVATE_KEY` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Löytyy kohdasta "API" -> "anon/public"  
+- `SUPABASE_PRIVATE_KEY` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Löytyy kohdasta "API" -> "anon/public"
 - `NEXT_PUBLIC_SUPABASE_URL`: Löytyy kohdasta "API" -> "Project URL"
 
 ### Kehitys

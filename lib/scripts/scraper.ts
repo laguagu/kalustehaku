@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import puppeteer, { ElementHandle } from "puppeteer";
-import { ScrapedProduct } from "../types";
+import { ScrapedProduct } from "../types/products/types";
 
 // Helper function to convert thumbnail URL to big image URL
 function convertToBigImageUrl(url: string): string {

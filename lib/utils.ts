@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ProductMetadata } from "./types";
+import { ProductMetadata } from "./types/metadata/metadata";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

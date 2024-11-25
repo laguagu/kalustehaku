@@ -1,6 +1,6 @@
 // lib/ai/embeddings.ts
 import OpenAI from "openai";
-import { ProductMetadata } from "../types";
+import { ProductMetadata } from "../types/metadata/metadata";
 
 export async function generateEmbedding(
   metadata: ProductMetadata,
