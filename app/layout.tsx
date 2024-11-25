@@ -14,6 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://tavaratrading-embeddings-alyakokeilut.2.rahtiapp.fi'),
   title: "Tavaratrading - Tekoälyhaku",
   description: "Hae käytettyjä huonekaluja teköälyn avulla",
   openGraph: {
