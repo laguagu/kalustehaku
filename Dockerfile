@@ -47,6 +47,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Create cache directories and set permissions
+RUN mkdir -p .next/cache/images \
+    && chown -R nextjs:nodejs .next \
+    && chmod -R 755 .next
+    
 COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size
