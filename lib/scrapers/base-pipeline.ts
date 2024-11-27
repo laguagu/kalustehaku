@@ -1,52 +1,50 @@
-import { scrapeProducts } from "@/lib/scripts/scraper";
-import pLimit from "p-limit";
-import { analyzeProduct } from "./ai/product-analyzer";
+// lib/scrapers/shared/base-pipeline.ts
 import {
   getProductById,
   prepareProductForDB,
   upsertProduct,
-} from "./db/queries";
-import { ProductMetadata } from "./types/metadata/metadata";
-import { PipelineResults, ScrapedProduct } from "./types/products/types";
+} from "@/lib/db/queries";
+import {
+  PipelineConfig,
+  PipelineResults,
+  ScrapedProduct,
+  ScraperConfig,
+} from "@/lib/types/products/types";
+import pLimit from "p-limit";
+import { generateFurnitureMetadata } from "../ai/product-analyzer";
+import { ProductMetadata } from "../types/metadata/metadata";
 
-const MAX_CONCURRENT_URLS = 3; // Montako URL:ää käsitellään rinnakkain
-const MAX_CONCURRENT_PRODUCTS = 5; // Montako tuotetta per URL käsitellään rinnakkain
-const RATE_LIMIT_DELAY = 1000; // 1 sekunti OpenAI pyyntöjen välillä
+const MAX_CONCURRENT_URLS = 3;
+const MAX_CONCURRENT_PRODUCTS = 5;
+const RATE_LIMIT_DELAY = 1000;
 
-// Apufunktio odottamiseen
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Käsiteltävät URL:it. Ellei annettu parametrina, käytetään oletusarvoja. Poista kommentit käyttääksesi kaikkia kategorioita.
-export const PRODUCT_URLS = [
-  "https://www.tavaratrading.com/toimistokalusteet/48/sahkopoydat",
-  // "https://www.tavaratrading.com/toimistokalusteet/1/tyo-satula-ja-valvomotuolit",
-  // "https://www.tavaratrading.com/toimistokalusteet/4/tyopoydat",
-  // "https://www.tavaratrading.com/toimistokalusteet/7/sailytys",
-  // "https://www.tavaratrading.com/toimistokalusteet/10/neuvottelupoydat-ja-tuolit",
-  // "https://www.tavaratrading.com/toimistokalusteet/194/korkeat-poydat-ja-tuolit",
-  // "https://www.tavaratrading.com/toimistokalusteet/13/sohvat-nojatuolit-penkit-ja-rahit",
-  // "https://www.tavaratrading.com/toimistokalusteet/189/sohvapoydat-pikku-poydat-ja-jakkarat",
-  // "https://www.tavaratrading.com/toimistokalusteet/14/sermit-ja-akustiikka",
-  // "https://www.tavaratrading.com/toimistokalusteet/37/valaisimet",
-  // "https://www.tavaratrading.com/toimistokalusteet/67/matot",
-  // "https://www.tavaratrading.com/toimistokalusteet/17/lisavarusteet",
-  // "https://www.tavaratrading.com/toimistokalusteet/110/ravintolakalusteet",
-];
+interface PipelineOptions {
+  urls?: string[];
+  productsPerUrl?: number;
+  isTestData?: boolean;
+  company: string;
+}
 
 async function processProduct(
   product: ScrapedProduct,
   results: PipelineResults,
+  config: PipelineConfig,
 ): Promise<void> {
   try {
     results.scraping.totalProcessed++;
 
     const existingProduct = await getProductById(product.id);
-    let productWithMetadata: ScrapedProduct & { metadata: ProductMetadata };
+    let productWithMetadata: ScrapedProduct & {
+      metadata: ProductMetadata;
+      isTestData: boolean;
+    };
 
     if (!existingProduct) {
       console.log(`Analyzing new product: ${product.name}`);
-      const metadata = await analyzeProduct(product);
-      await delay(RATE_LIMIT_DELAY); // Rajoitetaan OpenAI API kutsuja
+      const metadata = await generateFurnitureMetadata(product);
+      await delay(RATE_LIMIT_DELAY);
 
       productWithMetadata = {
         ...product,
@@ -62,12 +60,14 @@ async function processProduct(
           suitableFor: [],
           visualDescription: "",
         },
+        isTestData: config.isTestData,
       };
     } else {
       console.log(`Using existing metadata for product: ${product.name}`);
       productWithMetadata = {
         ...product,
         metadata: existingProduct.metadata,
+        isTestData: config.isTestData,
       };
     }
 
@@ -85,42 +85,44 @@ async function processProduct(
     results.scraping.failed++;
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
-
     results.products.push({
       id: product.id,
       name: product.name,
       status: "error",
       error: errorMessage,
     });
-
     results.scraping.errors.push(
       `Error processing ${product.name}: ${errorMessage}`,
     );
-
     console.error(`Error processing product ${product.name}:`, error);
   }
 }
 
-// Web screippaus ja tuotteiden käsittely
 async function processUrl(
   url: string,
   productsPerUrl: number,
   results: PipelineResults,
+  config: PipelineConfig,
+  scrapeProductsFn: (
+    url: string,
+    config: ScraperConfig,
+  ) => Promise<ScrapedProduct[]>,
 ): Promise<void> {
   try {
     console.log(`\nProcessing URL: ${url}`);
-    const scrapedProducts = await scrapeProducts(url);
+    const scrapedProducts = await scrapeProductsFn(url, {
+      company: config.company,
+    });
     const productsToProcess = scrapedProducts.slice(0, productsPerUrl);
 
     console.log(
       `Found ${scrapedProducts.length} products, processing ${productsToProcess.length}`,
     );
 
-    // Rajoita samanaikaisten tuotteiden prosessointia
     const productLimit = pLimit(MAX_CONCURRENT_PRODUCTS);
     await Promise.all(
       productsToProcess.map((product) =>
-        productLimit(() => processProduct(product, results)),
+        productLimit(() => processProduct(product, results, config)),
       ),
     );
   } catch (error) {
@@ -129,10 +131,13 @@ async function processUrl(
   }
 }
 
-export async function processProducts(options?: {
-  urls?: string[];
-  productsPerUrl?: number;
-}): Promise<PipelineResults> {
+export async function processProducts(
+  scrapeProductsFn: (
+    url: string,
+    config: ScraperConfig,
+  ) => Promise<ScrapedProduct[]>,
+  options: PipelineOptions,
+): Promise<PipelineResults> {
   const results: PipelineResults = {
     scraping: {
       totalProcessed: 0,
@@ -144,25 +149,32 @@ export async function processProducts(options?: {
   };
 
   try {
-    const urlsToProcess = options?.urls || PRODUCT_URLS;
-    const productsPerUrl = options?.productsPerUrl || 70;
+    const {
+      urls = [],
+      productsPerUrl = 70,
+      isTestData = false,
+      company,
+    } = options;
+
+    const config: PipelineConfig = {
+      isTestData,
+      company,
+    };
 
     console.log(
-      `Starting product scraping for ${urlsToProcess.length} URLs...`,
+      `Starting ${isTestData ? "TEST" : "PRODUCTION"} product scraping for ${urls.length} URLs...`,
     );
-    console.log(`Processing max ${productsPerUrl} products per URL`);
-    console.log(`Max concurrent URLs: ${MAX_CONCURRENT_URLS}`);
-    console.log(`Max concurrent products per URL: ${MAX_CONCURRENT_PRODUCTS}`);
+    console.log(`Company: ${company}`);
 
-    // Rajoita samanaikaisten URL:ien prosessointia
     const urlLimit = pLimit(MAX_CONCURRENT_URLS);
     await Promise.all(
-      urlsToProcess.map((url) =>
-        urlLimit(() => processUrl(url, productsPerUrl, results)),
+      urls.map((url) =>
+        urlLimit(() =>
+          processUrl(url, productsPerUrl, results, config, scrapeProductsFn),
+        ),
       ),
     );
 
-    // Yhteenveto
     console.log("\nProcessing Summary:");
     console.log(`Total Processed: ${results.scraping.totalProcessed}`);
     console.log(`Successful: ${results.scraping.successful}`);

@@ -1,4 +1,4 @@
-import { analyzeProduct } from "@/lib/ai/product-analyzer";
+import { generateFurnitureMetadata } from "@/lib/ai/product-analyzer";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -17,7 +17,7 @@ export async function GET() {
 
   try {
     console.log("Starting test analysis...");
-    const metadata = await analyzeProduct(testProduct);
+    const metadata = await generateFurnitureMetadata(testProduct);
 
     return NextResponse.json({
       success: true,

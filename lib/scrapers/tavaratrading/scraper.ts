@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { ScrapedProduct, ScraperConfig } from "@/lib/types/products/types";
 import fs from "fs";
 import path from "path";
 import puppeteer, { ElementHandle } from "puppeteer";
-import { ScrapedProduct } from "../types/products/types";
 
 // Helper function to convert thumbnail URL to big image URL
 function convertToBigImageUrl(url: string): string {
@@ -85,7 +85,10 @@ function safeParsePrice(priceText: string | null): number | null {
   }
 }
 // Scrapes only used products from the given URL
-export async function scrapeProducts(url: string): Promise<ScrapedProduct[]> {
+export async function scrapeProducts(
+  url: string,
+  config: ScraperConfig,
+): Promise<ScrapedProduct[]> {
   try {
     console.log("Launching browser...");
     const browser = await puppeteer.launch({
@@ -152,6 +155,7 @@ export async function scrapeProducts(url: string): Promise<ScrapedProduct[]> {
           category: url.split("/").pop() || "",
           availability: (await safeGetText(element, ".availability p")) || "",
           productUrl: productUrl || "",
+          company: config.company, // Lisätään yritystieto
         };
 
         if (product.id && product.name) {
@@ -172,12 +176,13 @@ export async function scrapeProducts(url: string): Promise<ScrapedProduct[]> {
   }
 }
 
-const TEST_URL =
-  "https://www.tavaratrading.com/toimistokalusteet/194/korkeat-poydat-ja-tuolit";
-
 export async function main() {
+  const TEST_URL =
+    "https://www.tavaratrading.com/toimistokalusteet/194/korkeat-poydat-ja-tuolit";
   try {
-    const products = await scrapeProducts(TEST_URL);
+    const products = await scrapeProducts(TEST_URL, {
+      company: "Tavara-Trading",
+    });
 
     // Save results to a JSON file
     const outputPath = path.join(process.cwd(), "scraped-products.json");

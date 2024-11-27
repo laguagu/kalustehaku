@@ -1,5 +1,13 @@
-import { processProducts, PRODUCT_URLS } from "@/lib/product-pipeline";
+// api/tavaratrading/scrape/route.ts
+import { processOffiStore } from "@/lib/scrapers/offistore";
+import { processTavaraTrading } from "@/lib/scrapers/tavaratrading";
+import { ScraperOptions } from "@/lib/types/products/types";
 import { NextResponse } from "next/server";
+
+const scrapers = {
+  tavaratrading: processTavaraTrading,
+  offistore: processOffiStore,
+};
 
 const basicAuth = async (request: Request) => {
   const authHeader = request.headers.get("authorization");
@@ -27,28 +35,26 @@ const basicAuth = async (request: Request) => {
   return null;
 };
 
-// Process helper with logging
-async function runProcessing(options?: {
-  urls?: string[];
-  productsPerUrl?: number;
-  isCron?: boolean;
-}) {
+async function runProcessing(options: ScraperOptions) {
   const startTime = Date.now();
-  const processType = options?.isCron ? "CRON" : "Manual";
+  const processType = options.isCron ? "CRON" : "Manual";
+  const dataType = options.isTestData ? "TEST" : "PRODUCTION";
 
   console.log(
-    `[${processType} Processing] Starting at ${new Date().toISOString()}`,
+    `[${processType} ${dataType} Processing] Starting at ${new Date().toISOString()}`,
   );
-  console.log(
-    `URLs to process: ${options?.urls?.length || PRODUCT_URLS.length}`,
-  );
-  console.log(`Products per URL: ${options?.productsPerUrl}`);
+  console.log(`Company: ${options.company}`);
+  console.log(`URLs to process: ${options.urls?.length || "default"}`);
+  console.log(`Products per URL: ${options.productsPerUrl}`);
 
   try {
-    const results = await processProducts({
-      urls: options?.urls,
-      productsPerUrl: options?.productsPerUrl,
-    });
+    const processFunction =
+      scrapers[options.company.toLowerCase() as keyof typeof scrapers];
+    if (!processFunction) {
+      throw new Error(`Invalid scraper specified: ${options.company}`);
+    }
+
+    const results = await processFunction(options);
 
     const duration = (Date.now() - startTime) / 1000;
     console.log(`[${processType} Processing] Completed in ${duration}s`);
@@ -63,25 +69,33 @@ async function runProcessing(options?: {
   }
 }
 
-// POST endpoint for manual processing with options
 export async function POST(request: Request) {
   try {
     const authResponse = await basicAuth(request);
     if (authResponse) return authResponse;
 
-    // Parse request body
     const body = await request.json().catch(() => ({}));
-    const { urls, productsPerUrl } = body;
-
-    const results = await runProcessing({
+    const {
+      company = "tavaratrading",
       urls,
       productsPerUrl,
-      isCron: false,
+      isTestData = true,
+      isCron = false,
+    } = body;
+
+    const results = await runProcessing({
+      company,
+      urls,
+      productsPerUrl,
+      isTestData,
+      isCron,
     });
 
     return NextResponse.json({
       success: true,
       data: results,
+      company,
+      isTestData,
     });
   } catch (error) {
     console.error("API error:", error);
@@ -94,36 +108,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
-// Verify CRON request
-// const verifyCron = (request: Request) => {
-//   const authHeader = request.headers.get("Authorization");
-//   return authHeader === `Bearer ${process.env.CRON_SECRET}`;
-// };
-
-// GET endpoint for CRON jobs
-// export async function GET(request: Request) {
-
-//   if (!verifyCron(request)) {
-//     return new NextResponse("Unauthorized", { status: 401 });
-//   }
-
-//   try {
-//     // CRON jobs process all URLs with default settings
-//     const results = await runProcessing({ isCron: true });
-
-//     return NextResponse.json({
-//       success: true,
-//       data: results,
-//     });
-//   } catch (error) {
-//     console.error("CRON error:", error);
-//     return NextResponse.json(
-//       {
-//         success: false,
-//         error: error instanceof Error ? error.message : "Unknown error",
-//       },
-//       { status: 500 },
-//     );
-//   }
-// }

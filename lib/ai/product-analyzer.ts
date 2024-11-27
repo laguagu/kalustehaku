@@ -21,7 +21,7 @@ async function getImageAsBase64(imageUrl: string): Promise<string | null> {
   }
 }
 
-export async function analyzeProduct(product: {
+export async function generateFurnitureMetadata(product: {
   id: string;
   name: string;
   description: string | null;

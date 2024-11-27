@@ -1,3 +1,4 @@
+//lib types/products/types.ts
 import { ProductMetadata } from "../metadata/metadata";
 
 export interface ScrapedProduct {
@@ -10,6 +11,24 @@ export interface ScrapedProduct {
   category: string;
   availability: string;
   productUrl: string;
+  company: string;
+}
+
+export interface ScraperConfig {
+  company: string;
+}
+
+export interface PipelineConfig {
+  isTestData: boolean;
+  company: string;
+}
+
+export interface ScraperOptions {
+  urls?: string[];
+  productsPerUrl?: number;
+  isTestData?: boolean;
+  isCron?: boolean;
+  company: string;
 }
 
 export interface PreparedProduct extends Omit<ScrapedProduct, "price"> {
@@ -18,6 +37,7 @@ export interface PreparedProduct extends Omit<ScrapedProduct, "price"> {
   embedding: number[] | null;
   searchTerms?: string;
   updatedAt?: Date;
+  isTestData: boolean;
 }
 
 export interface ProcessedProduct {
@@ -37,4 +57,6 @@ export interface PipelineResults {
     errors: string[];
   };
   products: ProcessedProduct[];
+  company?: string;
+  isTestData?: boolean;
 }

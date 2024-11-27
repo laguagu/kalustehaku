@@ -9,8 +9,8 @@
     "db:generate": "npx drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "tsx lib/db/migrate.ts",
-    "test:scraper": "tsx lib/scripts/scraper.ts",
-    "test:pipeline": "tsx lib/scripts/test-pipeline.ts",
+    "test:tt-scraper": "tsx lib/scrapers/tavaratrading/scraper.ts",
+    "test:offi-scraper": "tsx lib/scrapers/offistore/scraper.ts",
     "format": "prettier --write ."
   },
   "dependencies": {

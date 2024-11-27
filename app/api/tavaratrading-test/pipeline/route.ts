@@ -1,4 +1,5 @@
-import { processProducts, PRODUCT_URLS } from "@/lib/product-pipeline";
+import { PRODUCT_URLS } from "@/lib/scrapers/constants";
+import { processProducts } from "@/lib/scrapers/tavaratrading/pipeline";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -7,7 +8,6 @@ export async function GET() {
   try {
     const results = await processProducts({
       urls: testUrls,
-      productsPerUrl: 1,
     });
 
     return NextResponse.json({

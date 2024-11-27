@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   decimal,
   json,
   pgTable,
@@ -19,6 +20,8 @@ export const products = pgTable("products", {
   productUrl: text("product_url"),
   category: text("category"),
   availability: text("availability"),
+  company: text("company"),
+  isTestData: boolean("is_test_data").default(false),
   metadata: json("metadata").$type<ProductMetadata>().notNull(),
   embedding: vector("embedding", { dimensions: 1536 }),
   searchTerms: text("search_terms"),

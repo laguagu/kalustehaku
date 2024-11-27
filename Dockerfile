@@ -47,10 +47,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Create cache directories and set permissions
-RUN mkdir -p .next/cache/images \
-    && chown -R nextjs:nodejs .next \
-    && chmod -R 755 .next
+# Create cache directories and set permissions - Updated for OpenShift
+RUN mkdir -p .next/cache/images
+RUN chown -R nextjs:nodejs .next/cache/images
     
 COPY --from=builder /app/public ./public
 
@@ -59,6 +58,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Anna käyttäjälle nextjs oikeudet sovelluksen hakemistoon ja sen sisältöön
+RUN chown -R 1001:0 /app && chmod -R g+rwX /app
 USER nextjs
 
 EXPOSE 3000

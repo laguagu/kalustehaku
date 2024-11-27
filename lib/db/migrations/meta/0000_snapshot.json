@@ -1,5 +1,5 @@
 {
-  "id": "2132b98b-5ebb-4249-84d2-ab37f5394808",
+  "id": "49ba8d4a-aa02-4003-a9b8-8e7a9242f223",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -44,6 +44,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "product_url": {
+          "name": "product_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "category": {
           "name": "category",
           "type": "text",
@@ -56,11 +62,24 @@
           "primaryKey": false,
           "notNull": false
         },
+        "company": {
+          "name": "company",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_test_data": {
+          "name": "is_test_data",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
         "metadata": {
           "name": "metadata",
           "type": "json",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "embedding": {
           "name": "embedding",
