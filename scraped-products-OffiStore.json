@@ -120,18 +120,6 @@
     "company": "OffiStore"
   },
   {
-    "id": "28467",
-    "name": "PodSeat - Nojatuoli",
-    "description": "harmaa / violetti",
-    "price": 535,
-    "condition": "Käytetty",
-    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/28467_500x500_P0924_004.PNG",
-    "category": "aulakalusteet-93",
-    "availability": "2 kpl",
-    "productUrl": "https://offistore.fi/verkkokauppa/fin/podseat_nojatuoli-p-28467-93",
-    "company": "OffiStore"
-  },
-  {
     "id": "23047",
     "name": "PodSofa - sohva",
     "description": "oranssi / musta",
@@ -153,6 +141,18 @@
     "category": "aulakalusteet-93",
     "availability": "2 kpl",
     "productUrl": "https://offistore.fi/verkkokauppa/fin/soft_x_sohva-p-28481-93",
+    "company": "OffiStore"
+  },
+  {
+    "id": "30271",
+    "name": "Sohva 2,5",
+    "description": "Ikea",
+    "price": 199,
+    "condition": "Käytetty",
+    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/30271_500x500_XVHRM607.PNG",
+    "category": "aulakalusteet-93",
+    "availability": "2 kpl",
+    "productUrl": "https://offistore.fi/verkkokauppa/fin/sohva_2_5-p-30271-93",
     "company": "OffiStore"
   },
   {
@@ -201,6 +201,18 @@
     "category": "aulakalusteet-93",
     "availability": "1 kpl",
     "productUrl": "https://offistore.fi/verkkokauppa/fin/togo_kulmamoduuli-p-25960-93",
+    "company": "OffiStore"
+  },
+  {
+    "id": "28467",
+    "name": "PodSeat - Nojatuoli",
+    "description": "harmaa / violetti",
+    "price": 535,
+    "condition": "Käytetty",
+    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/28467_500x500_P0924_004.PNG",
+    "category": "aulakalusteet-93",
+    "availability": "",
+    "productUrl": "https://offistore.fi/verkkokauppa/fin/podseat_nojatuoli-p-28467-93",
     "company": "OffiStore"
   }
 ]

@@ -9,6 +9,8 @@ const scrapers = {
   offistore: processOffiStore,
 };
 
+const companyNames = ["tavaratrading", "offistore"];
+
 const basicAuth = async (request: Request) => {
   const authHeader = request.headers.get("authorization");
 
@@ -75,8 +77,9 @@ export async function POST(request: Request) {
     if (authResponse) return authResponse;
 
     const body = await request.json().catch(() => ({}));
+
     const {
-      company = "tavaratrading",
+      company = companyNames[0],
       urls,
       productsPerUrl,
       isTestData = true,

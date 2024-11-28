@@ -1,18 +1,18 @@
 // lib/scrapers/shared/base-pipeline.ts
 import {
-  getProductById,
+  getProductByIdAndCompany,
   prepareProductForDB,
   upsertProduct,
 } from "@/lib/db/queries";
 import {
   PipelineConfig,
   PipelineResults,
+  ProductWithMetadata,
   ScrapedProduct,
   ScraperConfig,
 } from "@/lib/types/products/types";
 import pLimit from "p-limit";
 import { generateFurnitureMetadata } from "../ai/product-analyzer";
-import { ProductMetadata } from "../types/metadata/metadata";
 
 const MAX_CONCURRENT_URLS = 3;
 const MAX_CONCURRENT_PRODUCTS = 5;
@@ -34,12 +34,12 @@ async function processProduct(
 ): Promise<void> {
   try {
     results.scraping.totalProcessed++;
+    const existingProduct = await getProductByIdAndCompany(
+      product.id,
+      config.company,
+    );
 
-    const existingProduct = await getProductById(product.id);
-    let productWithMetadata: ScrapedProduct & {
-      metadata: ProductMetadata;
-      isTestData: boolean;
-    };
+    let productWithMetadata: ProductWithMetadata;
 
     if (!existingProduct) {
       console.log(`Analyzing new product: ${product.name}`);

@@ -14,6 +14,11 @@ export interface ScrapedProduct {
   company: string;
 }
 
+export interface ProductWithMetadata extends ScrapedProduct {
+  metadata: ProductMetadata;
+  isTestData: boolean;
+}
+
 export interface ScraperConfig {
   company: string;
 }
