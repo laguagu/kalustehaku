@@ -93,9 +93,11 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
 
           {/* Tyyli ja design */}
           {(result.metadata.style || result.metadata.designStyle) && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 ">
               {result.metadata.style && (
-                <Badge variant="secondary">{result.metadata.style}</Badge>
+                <Badge variant="secondary">
+                  <span className="capitalize">{result.metadata.style}</span>
+                </Badge>
               )}
               {result.metadata.designStyle && (
                 <Badge variant="secondary">{result.metadata.designStyle}</Badge>
@@ -111,7 +113,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
                 {result.metadata.materials.map((material, index) => (
                   <span
                     key={index}
-                    className="text-xs bg-gray-50 px-2 py-1 rounded-full"
+                    className="capitalize text-xs bg-gray-50 px-2 py-1 rounded-full"
                   >
                     {material}
                   </span>
@@ -128,7 +130,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
                 {result.metadata.functionalFeatures.map((feature, index) => (
                   <span
                     key={index}
-                    className="text-xs bg-gray-50 px-2 py-1 rounded-full"
+                    className="capitalize text-xs bg-gray-50 px-2 py-1 rounded-full"
                   >
                     {feature}
                   </span>
@@ -148,7 +150,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
                   <Badge
                     key={index}
                     variant="outline"
-                    className="text-xs bg-green-50"
+                    className="text-xs bg-green-50 capitalize"
                   >
                     {room}
                   </Badge>

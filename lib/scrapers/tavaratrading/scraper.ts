@@ -178,7 +178,9 @@ export async function scrapeProducts(
 
 export async function main() {
   const TEST_URL =
-    "https://www.tavaratrading.com/toimistokalusteet/194/korkeat-poydat-ja-tuolit";
+    // "https://www.tavaratrading.com/toimistokalusteet/189/sohvapoydat-pikku-poydat-ja-jakkarat";
+    // "https://www.tavaratrading.com/toimistokalusteet/29/sohvat-nojatuolit-penkit-ja-rahit/kaytetyt-sohvat-nojatuolit-ja-rahit"
+    "https://www.tavaratrading.com/toimistokalusteet/13/sohvat-nojatuolit-penkit-ja-rahit";
   try {
     const products = await scrapeProducts(TEST_URL, {
       company: "Tavara-Trading",

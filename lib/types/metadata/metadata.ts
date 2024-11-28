@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/*ToDo: Rajoita tekoälyn kenttien luontia ja määrittele itse z.enum tyyppinä mahdolliset arvot
+// Materiaalit
 const FurnitureMaterialEnum = z.enum([
   "puu",
   "metalli",
@@ -8,23 +8,87 @@ const FurnitureMaterialEnum = z.enum([
   "muovi",
   "tekstiili",
   "nahka",
-  "vaneri"
+  "vaneri",
+  "marmori",
+  "kivi",
+  "bambu",
+  "rottinki",
 ]);
-ja käytetään sitä näin materials: z.array(FurnitureMaterialEnum).describe("Päämateriaalit listana"),
-*/
+
+// Värit - sisältää yleisimmät huonekaluissa käytetyt värit
+const FurnitureColorEnum = z.enum([
+  "musta",
+  "valkoinen",
+  "harmaa",
+  "ruskea",
+  "beige",
+  "tammi",
+  "koivu",
+  "pähkinä",
+  "mahonki",
+  "sininen",
+  "vihreä",
+  "punainen",
+  "keltainen",
+  "kulta",
+  "hopea",
+  "pronssi",
+  "monivärinen",
+]);
+
+// Kategoriat
+const FurnitureCategoryEnum = z.enum([
+  "tuolit",
+  "sohvat",
+  "pöydät",
+  "säilytys",
+  "sängyt",
+  "valaisimet",
+  "matot",
+  "peilit",
+  "muut",
+]);
+
+// Huonetyypit
+const RoomTypeEnum = z.enum([
+  "olohuone",
+  "makuuhuone",
+  "keittiö",
+  "ruokailuhuone",
+  "eteinen",
+  "työhuone",
+  "kylpyhuone",
+  "lastenhuone",
+  "parveke",
+  "terassi",
+  "kirjasto",
+  "vaatehuone",
+]);
+
+// Kuntoasteikko
+const ConditionEnum = z.enum([
+  "uudenveroinen",
+  "erinomainen",
+  "hyväkuntoinen",
+  "käyttökuntoinen",
+  "kunnostettava",
+  "entisöitävä",
+  "Ei tietoa",
+]);
+
 export const FurnitureMetadataSchema = z.object({
   style: z
     .string()
     .describe("Vallitseva tyyli (esim. moderni, skandinaavinen, teollinen)"),
-  materials: z.array(z.string()).describe("Päämateriaalit listana"),
-  category: z.string().describe("Tuotekategoria"),
-  colors: z.array(z.string()).describe("Päävärit ja sävyt listana"),
-  roomType: z.array(z.string()).describe("Sopivat huoneet/tilat listana"),
+  materials: z.array(FurnitureMaterialEnum).describe("Päämateriaalit listana"),
+  category: FurnitureCategoryEnum.describe("Tuotekategoria"),
+  colors: z.array(FurnitureColorEnum).describe("Päävärit ja sävyt listana"),
+  roomType: z.array(RoomTypeEnum).describe("Sopivat huoneet/tilat listana"),
   functionalFeatures: z
     .array(z.string())
     .describe("Toiminnalliset ominaisuudet ja erityispiirteet"),
   designStyle: z.string().describe("Suunnittelutyyli ja -aikakausi"),
-  condition: z.string().describe("Kunnon tarkempi analyysi"),
+  condition: ConditionEnum.describe("Kunnon tarkempi analyysi"),
   suitableFor: z
     .array(z.string())
     .describe("Sopivat käyttötarkoitukset ja -tilanteet"),

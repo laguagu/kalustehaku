@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       company = companyNames[0],
       urls,
       productsPerUrl,
-      isTestData = true,
+      isTestData = false,
       isCron = false,
     } = body;
 

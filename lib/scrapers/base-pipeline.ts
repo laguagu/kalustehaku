@@ -14,11 +14,12 @@ import {
 import pLimit from "p-limit";
 import { generateFurnitureMetadata } from "../ai/product-analyzer";
 
-const MAX_CONCURRENT_URLS = 3;
+const MAX_CONCURRENT_URLS = 2;
 const MAX_CONCURRENT_PRODUCTS = 5;
 const RATE_LIMIT_DELAY = 1000;
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 interface PipelineOptions {
   urls?: string[];
@@ -49,16 +50,16 @@ async function processProduct(
       productWithMetadata = {
         ...product,
         metadata: metadata || {
-          style: "",
+          style: "moderni",
           materials: [],
-          category: "",
+          category: "muut",
           colors: [],
           roomType: [],
           functionalFeatures: [],
           designStyle: "",
-          condition: "",
+          condition: "Ei tietoa",
           suitableFor: [],
-          visualDescription: "",
+          visualDescription: "Ei kuvausta saatavilla",
         },
         isTestData: config.isTestData,
       };
@@ -151,7 +152,7 @@ export async function processProducts(
   try {
     const {
       urls = [],
-      productsPerUrl = 70,
+      productsPerUrl = 100,
       isTestData = false,
       company,
     } = options;
