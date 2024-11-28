@@ -40,9 +40,10 @@ export async function generateFurnitureMetadata(product: {
     const messages: ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: `Olet sisustussuunnittelija-asiantuntija, joka analysoi huonekaluja ja luo niistä tarkkaa metadataa. 
-        Keskity kuvailemaan huonekalun tyyliä, materiaaleja, värejä ja käyttötarkoitusta ammattilaisen näkökulmasta.
-        Jos et pysty analysoimaan tuotetta kunnolla, palauta tyhjät listat ja yleisluontoiset kuvaukset.`,
+        content: `Olet sisustussuunnittelija-asiantuntija, joka analysoi huonekaluja ja luo niistä tarkkaa metadataa semanttista hakua varten. 
+        Keskity kuvailemaan huonekalua ammattilaisen näkökulmasta.
+        Pyri tunnistamaan valmistaja ja brändi tuotteen nimestä tai kuvauksesta (esim. "ISKU sähköpöytä" -> brändi: "Isku").
+        Jos et pysty analysoimaan jotain ominaisuutta varmasti, voit jättää kentän tyhjäksi sen sijaan että arvioisit.`,
       },
     ];
 

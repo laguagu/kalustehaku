@@ -34,10 +34,19 @@ const FurnitureColorEnum = z.enum([
   "hopea",
   "pronssi",
   "monivärinen",
+  "tummanharmaa",
+  "vaaleanharmaa",
+  "luonnonvalkoinen",
+  "tummapuu",
+  "vaalea tammi",
+  "vaaleapuu",
+  "turkoosi",
+  "oranssi",
+  "purppura",
 ]);
 
 // Kategoriat
-const FurnitureCategoryEnum = z.enum([
+const FurnitureMainGategoryEnum = z.enum([
   "tuolit",
   "sohvat",
   "pöydät",
@@ -46,6 +55,51 @@ const FurnitureCategoryEnum = z.enum([
   "valaisimet",
   "matot",
   "peilit",
+  "muut",
+]);
+
+const FurnitureCategoryEnum = z.enum([
+  "tuolit",
+  "työtuolit",
+  "nojatuolit",
+  "sohvat",
+  "rahit",
+  "jakkarat",
+  "ruokailutuolit",
+  "pöydät",
+  "työpöydät",
+  "ruokapöydät",
+  "sohvapöydät",
+  "sivupöydät",
+  "neuvottelupöydät",
+  "baaripöydät",
+  "säilytys",
+  "kaapit",
+  "lipastot",
+  "hyllyt",
+  "vaatekaapit",
+  "tv-tasot",
+  "vitriinit",
+  "naulakot",
+  "sängyt",
+  "sohvasängyt",
+  "vuodesohvat",
+  "runkopatjat",
+  "jenkkisängyt",
+  "valaisimet",
+  "pöytävalaisimet",
+  "lattialamput",
+  "kattovalaisimet",
+  "työpistevalaisimet",
+  "matot",
+  "käytävämatot",
+  "aluematot",
+  "peilit",
+  "seinähyllyt",
+  "tilanjakajat",
+  "ulkokalusteet",
+  "terassikalusteet",
+  "puutarhakalusteet",
   "muut",
 ]);
 
@@ -81,7 +135,13 @@ export const FurnitureMetadataSchema = z.object({
     .string()
     .describe("Vallitseva tyyli (esim. moderni, skandinaavinen, teollinen)"),
   materials: z.array(FurnitureMaterialEnum).describe("Päämateriaalit listana"),
+  brand: z
+    .string()
+    .describe(
+      "Pyri tunnistamaan valmistaja tai brändi tuotteen nimestä, kuvauksesta tai muista tiedoista. Jätä tyhjäksi jos et ole varma.",
+    ),
   category: FurnitureCategoryEnum.describe("Tuotekategoria"),
+  mainGategory: FurnitureMainGategoryEnum.describe("Pääkategoria)"),
   colors: z.array(FurnitureColorEnum).describe("Päävärit ja sävyt listana"),
   roomType: z.array(RoomTypeEnum).describe("Sopivat huoneet/tilat listana"),
   functionalFeatures: z
@@ -94,7 +154,9 @@ export const FurnitureMetadataSchema = z.object({
     .describe("Sopivat käyttötarkoitukset ja -tilanteet"),
   visualDescription: z
     .string()
-    .describe("Yksityiskohtainen visuaalinen kuvaus huonekalusta"),
+    .describe(
+      "Yksityiskohtainen ja kattava visuaalinen kuvaus huonekalusta semanttista hakua varten",
+    ),
 });
 
 export type ProductMetadata = z.infer<typeof FurnitureMetadataSchema>;

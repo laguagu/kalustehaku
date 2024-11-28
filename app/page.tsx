@@ -1,6 +1,6 @@
 "use client";
 import { ProductCard } from "@/components/product-card";
-import { SearchInfo } from "@/components/search-ifno";
+import { SearchInfo } from "@/components/search-info";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,7 +69,7 @@ export default function TavaraTradingSearch() {
     try {
       setHasSearched(true);
       const searchResults = await searchFurniture(searchQuery, {
-        minSimilarity: 0.4,
+        minSimilarity: 0.42,
         maxResults: 6,
       });
       setResults(searchResults);
@@ -143,7 +143,7 @@ export default function TavaraTradingSearch() {
         {/* Results section */}
         {results.length > 0 && (
           <div className="pt-8">
-            <div className="flex justify-between items-center mb-6">
+            <div className="hidden md:flex justify-between items-center mb-6">
               <div className="space-y-2">
                 <h2 className="text-2xl font-semibold text-gray-900">
                   Löydetyt käytetyt huonekalut
@@ -161,7 +161,7 @@ export default function TavaraTradingSearch() {
                   70-89% = Hyvä vastaavuus
                 </Badge>
                 <Badge variant="outline" className="bg-gray-50">
-                  40-69% = Kohtalainen vastaavuus
+                  42-69% = Kohtalainen vastaavuus
                 </Badge>
               </div>
             </div>
@@ -177,7 +177,7 @@ export default function TavaraTradingSearch() {
             {results.some((r) => r.similarity < 0.5) && (
               <Alert className="mt-6 bg-yellow-50 border-yellow-200">
                 <AlertDescription className="text-yellow-800">
-                  Jotkin hakutuloksista ovat alle 40% vastaavuudella. Kokeile
+                  Jotkin hakutuloksista ovat alle 42% vastaavuudella. Kokeile
                   tarkentaa hakusanojasi saadaksesi osuvampia tuloksia. Huom!
                   Tietokantamme kasvaa jatkuvasti, mutta tällä hetkellä se
                   sisältää vain osan saatavilla olevista tuotteista.

@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}));
 
     const {
-      company = companyNames[1],
+      company = companyNames[1], // Set wanted scraper here for example "tavaratrading" is [0] and "offistore" is [1]. Look top of the file scrapers object;
       urls,
       productsPerUrl,
       isTestData = false,

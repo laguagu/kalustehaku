@@ -1,8 +1,8 @@
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Alert } from "@/components/ui/alert";
 
@@ -28,7 +28,7 @@ export function SearchInfo() {
               </li>
               <li>
                 Näytämme 6 parhaiten vastaavaa tuotetta vastaavuusprosentin
-                kanssa. 100% tarkoittaa täydellistä osumaa, 40% heikointa
+                kanssa. 100% tarkoittaa täydellistä osumaa, 42% heikointa
                 mahdollista näytettävää osumaa.
               </li>
               <li>

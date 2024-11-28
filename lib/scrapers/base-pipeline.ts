@@ -15,7 +15,7 @@ import pLimit from "p-limit";
 import { generateFurnitureMetadata } from "../ai/product-analyzer";
 
 const MAX_CONCURRENT_URLS = 2;
-const MAX_CONCURRENT_PRODUCTS = 5;
+const MAX_CONCURRENT_PRODUCTS = 13;
 const RATE_LIMIT_DELAY = 1000;
 
 export const delay = (ms: number) =>
@@ -50,6 +50,8 @@ async function processProduct(
       productWithMetadata = {
         ...product,
         metadata: metadata || {
+          mainGategory: "muut",
+          brand: "",
           style: "moderni",
           materials: [],
           category: "muut",

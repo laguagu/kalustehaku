@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import "server-only";
-import { generateEmbedding } from "../ai/embedding";
+import { generateEmbedding } from "../ai/generate-embedding";
 import { PreparedProduct, ProductWithMetadata } from "../types/products/types";
 import { generateSearchTerms } from "../utils";
 import { db } from "./drizzle";
