@@ -2,6 +2,7 @@ import { SearchResult } from "@/app/page";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
 
@@ -11,6 +12,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ result, isBestMatch }: ProductCardProps) {
+  const [imgError, setImgError] = useState(false);
   return (
     <Card
       className={cn(
@@ -35,12 +37,13 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
           )}
 
           <Image
-            src={result.image_url}
+            src={imgError ? "/image-not-found.png" : result.image_url}
             alt={result.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-contain transition-transform duration-300 group-hover:scale-105 rounded-xl"
             priority={isBestMatch}
+            onError={() => setImgError(true)}
           />
 
           <div className="absolute top-2 right-2 z-20">
