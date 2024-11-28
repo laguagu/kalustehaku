@@ -43,14 +43,14 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             priority={isBestMatch}
           />
 
-          {/* <div className="absolute top-2 right-2 z-20">
+          <div className="absolute top-2 right-2 z-20">
             <Badge
               variant={result.similarity > 0.8 ? "default" : "secondary"}
               className={cn("shadow-sm", isBestMatch && "bg-green-500")}
             >
               {(result.similarity * 100).toFixed(0)}% vastaavuus
             </Badge>
-          </div> */}
+          </div>
         </div>
 
         <CardContent className="p-4 space-y-4">

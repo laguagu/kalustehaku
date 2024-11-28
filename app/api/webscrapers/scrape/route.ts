@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}));
 
     const {
-      company = companyNames[0],
+      company = companyNames[1],
       urls,
       productsPerUrl,
       isTestData = false,
