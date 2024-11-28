@@ -152,7 +152,7 @@ export async function processProducts(
   try {
     const {
       urls = [],
-      productsPerUrl = 100,
+      productsPerUrl = 200,
       isTestData = false,
       company,
     } = options;

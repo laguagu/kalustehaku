@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "www.tavaratrading.com",
       },
+      {
+        protocol: "https",
+        hostname: "offistore.fi",
+      },
     ],
   },
   output: "standalone",

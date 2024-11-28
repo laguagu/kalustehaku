@@ -1,5 +1,8 @@
 "use client";
 import { ProductCard } from "@/components/product-card";
+import { SearchInfo } from "@/components/search-ifno";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -66,7 +69,7 @@ export default function TavaraTradingSearch() {
     try {
       setHasSearched(true);
       const searchResults = await searchFurniture(searchQuery, {
-        minSimilarity: 0.25,
+        minSimilarity: 0.4,
         maxResults: 6,
       });
       setResults(searchResults);
@@ -100,7 +103,9 @@ export default function TavaraTradingSearch() {
         </div>
 
         {/* Search form */}
-        <form action={handleSearch} className="max-w-3xl mx-auto">
+        <form action={handleSearch} className="max-w-3xl mx-auto space-y-4">
+          <SearchInfo />
+
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-2">
               <CardTitle className="text-xl">Huonekaluhaku</CardTitle>
@@ -139,12 +144,26 @@ export default function TavaraTradingSearch() {
         {results.length > 0 && (
           <div className="pt-8">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Löydetyt käytetyt huonekalut
-              </h2>
-              <p className="text-gray-500">
-                {results.length} {results.length === 1 ? "tulos" : "tulosta"}
-              </p>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-semibold text-gray-900">
+                  Löydetyt käytetyt huonekalut
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Hakusanasi parhaiten vastaavat tuotteet ({results.length}{" "}
+                  {results.length === 1 ? "tulos" : "tulosta"})
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-gray-50">
+                  90-100% = Erinomainen vastaavuus
+                </Badge>
+                <Badge variant="outline" className="bg-gray-50">
+                  70-89% = Hyvä vastaavuus
+                </Badge>
+                <Badge variant="outline" className="bg-gray-50">
+                  40-69% = Kohtalainen vastaavuus
+                </Badge>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {results.map((result, index) => (
@@ -155,9 +174,18 @@ export default function TavaraTradingSearch() {
                 />
               ))}
             </div>
+            {results.some((r) => r.similarity < 0.5) && (
+              <Alert className="mt-6 bg-yellow-50 border-yellow-200">
+                <AlertDescription className="text-yellow-800">
+                  Jotkin hakutuloksista ovat alle 40% vastaavuudella. Kokeile
+                  tarkentaa hakusanojasi saadaksesi osuvampia tuloksia. Huom!
+                  Tietokantamme kasvaa jatkuvasti, mutta tällä hetkellä se
+                  sisältää vain osan saatavilla olevista tuotteista.
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
         )}
-
         {/* No results state */}
         {results.length === 0 && hasSearched && !error && (
           <div className="text-center py-16 bg-white rounded-lg shadow-sm">

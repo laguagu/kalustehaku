@@ -1,14 +1,18 @@
-import { PRODUCT_URLS } from "@/lib/scrapers/constants";
+import { processProducts } from "@/lib/scrapers/base-pipeline";
+import { PRODUCT_URLS } from "@/lib/scrapers/tavaratrading";
 import { scrapeProducts } from "@/lib/scrapers/tavaratrading/scraper";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const testUrl = PRODUCT_URLS[0];
+  const testUrls = PRODUCT_URLS.slice(0, 2);
 
   try {
-    const results = await scrapeProducts(testUrl, {
+    const results = await processProducts(scrapeProducts, {
+      urls: testUrls,
+      isTestData: true,
       company: "Tavara-Trading",
     });
+
     return NextResponse.json({
       success: true,
       data: results,

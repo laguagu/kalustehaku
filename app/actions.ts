@@ -31,7 +31,7 @@ export async function searchFurniture(
     maxResults?: number;
   } = {},
 ): Promise<[]> {
-  const { minSimilarity = 0.1, maxResults = 1 } = options;
+  const { minSimilarity = 0.4, maxResults = 1 } = options;
 
   try {
     const embedding = await generateSearchEmbedding(searchQuery);
