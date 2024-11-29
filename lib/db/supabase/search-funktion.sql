@@ -1,15 +1,12 @@
 create extension if not exists vector;
 
-CREATE INDEX IF NOT EXISTS embeddingIndex 
-ON products 
-USING hnsw (embedding vector_cosine_ops);
-
-create or replace function match_furniture (
+CREATE OR REPLACE FUNCTION match_furnitures_with_filter (
   query_embedding vector(1536),
   match_threshold float,
-  match_count int
+  match_count int,
+  filter jsonb DEFAULT '{}'::jsonb
 ) 
-returns table (
+RETURNS TABLE (
   id text,
   name text,
   price decimal,
@@ -19,7 +16,10 @@ returns table (
   metadata jsonb,
   similarity float
 )
-language plpgsql as $$
+LANGUAGE plpgsql AS $$
+DECLARE
+  color_filter jsonb := filter -> 'colors';
+  metadata_filter jsonb := filter - 'colors';
 BEGIN
   RETURN QUERY
   SELECT
@@ -29,15 +29,32 @@ BEGIN
     products.image_url,
     products.product_url,
     products.condition,
-    products.metadata::jsonb,
+    products.metadata,
     1 - (products.embedding <=> query_embedding) as similarity
   FROM products
   WHERE 1 - (products.embedding <=> query_embedding) > match_threshold
+    AND (
+      filter = '{}'::jsonb
+      OR (
+        -- Tarkista muut metadata-kentät paitsi värit
+        (metadata_filter = '{}'::jsonb OR products.metadata @> metadata_filter)
+        AND
+        -- Tarkista värit: palauta true jos yksikin väri täsmää
+        (
+          color_filter IS NULL
+          OR EXISTS (
+            SELECT 1
+            FROM jsonb_array_elements_text(color_filter) AS filter_color
+            WHERE filter_color IN (
+              SELECT jsonb_array_elements_text(products.metadata -> 'colors')
+            )
+          )
+        )
+      )
+    )
   ORDER BY similarity DESC
   LIMIT match_count;
 END;
 $$;
 
-DROP FUNCTION IF EXISTS match_furniture CASCADE;
-DROP TABLE IF EXISTS products CASCADE;
-DROP EXTENSION IF EXISTS vector CASCADE;
+create index idx_products_metadata on products using gin (metadata);
