@@ -57,3 +57,22 @@ export async function searchFurniture(
     throw error;
   }
 }
+
+// HUOM!
+// Ei välttämättä hyvä ratkaisu ja ei tarpeen käyttää tätä
+
+// async function enhanceSearchQuery(rawQuery: string): Promise<string> {
+//   try {
+//     const { text: optimizedQuery } = await generateText({
+//       model: openai("gpt-4o-mini"),
+//       system: "Olet huonekaluhakujen optimoija. Optimoi käyttäjän hakuteksti semanttista hakua varten mikäli tarvetta. Jos hakuteksti on jo optimaalinen, palauta se sellaisenaan.",
+//       prompt: rawQuery
+//     });
+
+//     return optimizedQuery;
+
+//   } catch (error) {
+//     console.error("Query enhancement failed:", error);
+//     return rawQuery;
+//   }
+// }

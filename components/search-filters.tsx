@@ -13,6 +13,13 @@ import {
   FurnitureMainCategoryEnum,
   FurnitureMaterialEnum,
 } from "@/lib/types/metadata/metadata";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
+import { Info } from "lucide-react";
 import { useQueryState } from "nuqs";
 
 export function SearchFilters() {
@@ -72,7 +79,22 @@ export function SearchFilters() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Pääkategoria */}
         <div className="space-y-2">
-          <Label>Pääkategoria</Label>
+          <div className="flex items-center gap-2">
+            <Label>Pääkategoria</Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-4 w-4 text-gray-500 hover:text-gray-900 cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent className="bg-white border border-gray-200 shadow-md p-3 rounded-lg">
+                  <p className="max-w-xs text-gray-700">
+                    Valitse yksi pääkategoria rajataksesi hakutuloksia.
+                    Huonekalun tulee kuulua valittuun kategoriaan.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <Select
             value={category ?? "all"}
             onValueChange={handleCategoryChange}
@@ -93,7 +115,23 @@ export function SearchFilters() {
 
         {/* Materiaalit */}
         <div className="space-y-2">
-          <Label>Materiaalit</Label>
+          <div className="flex items-center gap-2">
+            <Label>Materiaalit</Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-4 w-4 text-gray-500 hover:text-gray-900 cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent className="bg-white border border-gray-200 shadow-md p-3 rounded-lg">
+                  <p className="max-w-xs text-gray-700">
+                    Valitse materiaalit, joita huonekalussa tulee olla.
+                    Huonekalun täytyy sisältää KAIKKI valitsemasi materiaalit
+                    näkyäkseen tuloksissa.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <div className="space-y-2 max-h-40 overflow-y-auto">
             {Object.values(FurnitureMaterialEnum.enum).map((material) => (
               <div key={material} className="flex items-center space-x-2">
@@ -116,7 +154,23 @@ export function SearchFilters() {
 
         {/* Värit */}
         <div className="space-y-2">
-          <Label>Värit</Label>
+          <div className="flex items-center gap-2">
+            <Label>Värit</Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-4 w-4 text-gray-500 hover:text-gray-900 cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent className="bg-white border border-gray-200 shadow-md p-3 rounded-lg">
+                  <p className="max-w-xs text-gray-700">
+                    Valitse värit, joita haluat huonekalussa olevan. Huonekalun
+                    riittää sisältää YKSIKIN valitsemistasi väriryhmistä
+                    näkyäkseen tuloksissa.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <div className="space-y-2">
             {(
               Object.keys(COLOR_GROUPS_MAP) as (keyof typeof COLOR_GROUPS_MAP)[]

@@ -18,12 +18,12 @@ export function SearchInfo() {
             <ul className="list-disc pl-4 space-y-1 mt-2 text-muted-foreground">
               <li>
                 Tekoäly ymmärtää luonnollista kieltä - voit kuvailla haluamaasi
-                huonekalua vapaasti (esim. &quot;Väriltään valkoinen 
+                huonekalua vapaasti (esim. &quot;Väriltään valkoinen
                 toimistopöytä&quot;)
               </li>
               <li>
-                Rajaa hakutuloksia käyttämällä filttereitä kategorian, materiaalien 
-                ja värien mukaan
+                Rajaa hakutuloksia käyttämällä filttereitä kategorian,
+                materiaalien ja värien mukaan
               </li>
               <li>
                 Jos hakemaasi tuotetta ei löydy suoraan, näytämme samankaltaisia
