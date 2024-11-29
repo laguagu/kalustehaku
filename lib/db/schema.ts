@@ -2,7 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   decimal,
-  json,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -27,7 +27,7 @@ export const products = pgTable(
     availability: text("availability"),
     company: text("company").notNull(),
     isTestData: boolean("is_test_data").default(false),
-    metadata: json("metadata").$type<ProductMetadata>().notNull(),
+    metadata: jsonb("metadata").$type<ProductMetadata>().notNull(),
     embedding: vector("embedding", { dimensions: 1536 }),
     searchTerms: text("search_terms"),
     createdAt: timestamp("created_at").default(sql`NOW()`),

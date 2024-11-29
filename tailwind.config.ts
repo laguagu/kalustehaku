@@ -78,6 +78,12 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontFamily: {
+        // Nämä ovat nyt käytettävissä Tailwind-luokkina
+        roboto: ["var(--font-roboto-condensed)"],
+        geist: ["var(--font-geist-sans)"],
+        mono: ["var(--font-geist-mono)"],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

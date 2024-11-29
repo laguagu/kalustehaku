@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Materiaalit
-const FurnitureMaterialEnum = z.enum([
+export const FurnitureMaterialEnum = z.enum([
   "puu",
   "metalli",
   "lasi",
@@ -16,7 +16,7 @@ const FurnitureMaterialEnum = z.enum([
 ]);
 
 // Värit - sisältää yleisimmät huonekaluissa käytetyt värit
-const FurnitureColorEnum = z.enum([
+export const FurnitureColorEnum = z.enum([
   "musta",
   "valkoinen",
   "harmaa",
@@ -46,7 +46,7 @@ const FurnitureColorEnum = z.enum([
 ]);
 
 // Kategoriat
-const FurnitureMainGategoryEnum = z.enum([
+export const FurnitureMainCategoryEnum = z.enum([
   "tuolit",
   "sohvat",
   "pöydät",
@@ -58,7 +58,7 @@ const FurnitureMainGategoryEnum = z.enum([
   "muut",
 ]);
 
-const FurnitureCategoryEnum = z.enum([
+export const FurnitureCategoryEnum = z.enum([
   "tuolit",
   "työtuolit",
   "nojatuolit",
@@ -104,7 +104,7 @@ const FurnitureCategoryEnum = z.enum([
 ]);
 
 // Huonetyypit
-const RoomTypeEnum = z.enum([
+export const RoomTypeEnum = z.enum([
   "olohuone",
   "makuuhuone",
   "keittiö",
@@ -120,7 +120,7 @@ const RoomTypeEnum = z.enum([
 ]);
 
 // Kuntoasteikko
-const ConditionEnum = z.enum([
+export const ConditionEnum = z.enum([
   "uudenveroinen",
   "erinomainen",
   "hyväkuntoinen",
@@ -141,7 +141,7 @@ export const FurnitureMetadataSchema = z.object({
       "Pyri tunnistamaan valmistaja tai brändi tuotteen nimestä, kuvauksesta tai muista tiedoista. Jätä tyhjäksi jos et ole varma.",
     ),
   category: FurnitureCategoryEnum.describe("Tuotekategoria"),
-  mainGategory: FurnitureMainGategoryEnum.describe("Pääkategoria)"),
+  mainGategory: FurnitureMainCategoryEnum.describe("Pääkategoria)"),
   colors: z.array(FurnitureColorEnum).describe("Päävärit ja sävyt listana"),
   roomType: z.array(RoomTypeEnum).describe("Sopivat huoneet/tilat listana"),
   functionalFeatures: z
@@ -160,3 +160,11 @@ export const FurnitureMetadataSchema = z.object({
 });
 
 export type ProductMetadata = z.infer<typeof FurnitureMetadataSchema>;
+export type ConditionEnum = z.infer<typeof ConditionEnum>;
+export type RoomTypeEnum = z.infer<typeof RoomTypeEnum>;
+export type FurnitureCategoryEnum = z.infer<typeof FurnitureCategoryEnum>;
+export type FurnitureMainCategoryEnum = z.infer<
+  typeof FurnitureMainCategoryEnum
+>;
+export type FurnitureColorEnum = z.infer<typeof FurnitureColorEnum>;
+export type FurnitureMaterialEnum = z.infer<typeof FurnitureMaterialEnum>;

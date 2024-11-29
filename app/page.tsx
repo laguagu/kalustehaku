@@ -1,28 +1,16 @@
 "use client";
 import { ProductCard } from "@/components/product-card";
-import { SearchInfo } from "@/components/search-info";
+import SearchForm from "@/components/search-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useFormStatus } from "react-dom";
-import { searchFurniture } from "./actions";
+import { useSearchWithFilters } from "@/lib/hooks/useSearchWithFilters";
 
 export interface SearchResult {
   id: string;
   name: string;
   price: number | null;
-  image_url: string; // Huom! snake_case
-  product_url: string; // Huom! snake_case
+  image_url: string;
+  product_url: string;
   condition: string;
   metadata: {
     style: string;
@@ -39,53 +27,19 @@ export interface SearchResult {
   similarity: number;
 }
 
-function SearchButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button disabled={pending} type="submit">
-      {pending ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Haetaan...
-        </>
-      ) : (
-        "Hae"
-      )}
-    </Button>
-  );
-}
-
 export default function TavaraTradingSearch() {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [hasSearched, setHasSearched] = useState(false);
-
-  async function handleSearch(formData: FormData) {
-    const searchQuery = formData.get("query") as string;
-    if (!searchQuery?.trim()) return;
-
-    try {
-      setHasSearched(true);
-      const searchResults = await searchFurniture(searchQuery, {
-        minSimilarity: 0.42,
-        maxResults: 6,
-      });
-      setResults(searchResults);
-      setError(null);
-    } catch (err) {
-      setError("Haussa tapahtui virhe. Yritä uudelleen.");
-      console.error("Search error:", err);
-    }
-  }
+  const {
+    searchStates,
+    setSearchStates,
+    results,
+    error,
+    hasSearched,
+    handleSearch,
+    isLoading,
+  } = useSearchWithFilters();
 
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuery = e.target.value;
-    setQuery(newQuery);
-    if (!newQuery) {
-      setHasSearched(false);
-    }
+    setSearchStates({ ...searchStates, q: e.target.value || "" });
   };
 
   return (
@@ -93,52 +47,23 @@ export default function TavaraTradingSearch() {
       <div className="w-full max-w-6xl mx-auto p-4 space-y-6">
         {/* Hero section */}
         <div className="text-center py-8 space-y-4">
-          <h1 className="text-4xl font-bold text-gray-900">
+          <h1 className="text-4xl font-bold text-gray-900 ">
             Löydä täydellinen huonekalu
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto font-roboto">
             Etsi käytettyjä huonekaluja kuvailemalla mitä etsit. Tekoäly auttaa
             löytämään toiveitasi vastaavat huonekalut.
           </p>
         </div>
 
-        {/* Search form */}
-        <form action={handleSearch} className="max-w-3xl mx-auto space-y-4">
-          <SearchInfo />
-
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xl">Huonekaluhaku</CardTitle>
-              <CardDescription>
-                Kuvaile haluamaasi huonekalua mahdollisimman tarkasti
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-3">
-                <Input
-                  type="text"
-                  name="query"
-                  placeholder="Esim: Moderni valkoinen sähköpöytä työhuoneeseen..."
-                  value={query}
-                  onChange={handleQueryChange}
-                  className="flex-1"
-                />
-                <div
-                  className={
-                    !query.trim() ? "pointer-events-none opacity-50" : ""
-                  }
-                >
-                  <SearchButton />
-                </div>
-              </div>
-              {error && (
-                <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
-                  {error}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </form>
+        {/* Search Form */}
+        <SearchForm
+          searchStates={searchStates}
+          handleQueryChange={handleQueryChange}
+          handleSearch={handleSearch}
+          isLoading={isLoading}
+          error={error}
+        />
 
         {/* Results section */}
         {results.length > 0 && (
@@ -178,14 +103,13 @@ export default function TavaraTradingSearch() {
               <Alert className="mt-6 bg-yellow-50 border-yellow-200">
                 <AlertDescription className="text-yellow-800">
                   Jotkin hakutuloksista ovat alle 42% vastaavuudella. Kokeile
-                  tarkentaa hakusanojasi saadaksesi osuvampia tuloksia. Huom!
-                  Tietokantamme kasvaa jatkuvasti, mutta tällä hetkellä se
-                  sisältää vain osan saatavilla olevista tuotteista.
+                  tarkentaa hakusanojasi saadaksesi osuvampia tuloksia.
                 </AlertDescription>
               </Alert>
             )}
           </div>
         )}
+
         {/* No results state */}
         {results.length === 0 && hasSearched && !error && (
           <div className="text-center py-16 bg-white rounded-lg shadow-sm">

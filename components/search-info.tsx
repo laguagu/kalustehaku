@@ -8,7 +8,7 @@ import { Alert } from "@/components/ui/alert";
 
 export function SearchInfo() {
   return (
-    <Alert className="bg-blue-50 border-blue-200">
+    <Alert className="">
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="search-info" className="border-none">
           <AccordionTrigger className="p-0 hover:no-underline text-blue-900 font-medium">
