@@ -198,7 +198,7 @@ export function SearchFilters() {
         onClick={handleReset}
         className="mt-4"
       >
-        Tyhjennä filtterit
+        Tyhjennä valinnat
       </Button>
     </div>
   );
