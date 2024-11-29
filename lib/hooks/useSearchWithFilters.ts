@@ -1,7 +1,7 @@
 import { searchFurniture } from "@/app/actions";
 import { SearchResult } from "@/app/page";
 import { parseAsString, useQueryStates } from "nuqs";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { COLOR_GROUPS_MAP } from "../types/filters/colorGroups";
 import {
   FurnitureMainCategoryEnum,
@@ -63,9 +63,8 @@ export function useSearchWithFilters() {
     return Object.keys(filters).length > 0 ? filters : undefined;
   }, [searchStates.cat, searchStates.mat, searchStates.col]);
 
-  const handleSearch = useCallback(
-    async (formData: FormData) => {
-      const query = formData.get("query") as string;
+  const performSearch = useCallback(
+    async (query: string) => {
       if (!query?.trim()) return;
 
       setIsLoading(true);
@@ -73,8 +72,6 @@ export function useSearchWithFilters() {
 
       try {
         const filters = buildFilters();
-        console.log("Current search states:", searchStates);
-        console.log("Built filters:", filters);
 
         const searchResults = await searchFurniture(query, {
           minSimilarity: 0.42,
@@ -84,8 +81,6 @@ export function useSearchWithFilters() {
 
         setResults(searchResults);
         setError(null);
-
-        await setSearchStates({ ...searchStates, q: query });
       } catch (err) {
         setError("Haussa tapahtui virhe. Yritä uudelleen.");
         console.error("Search error:", err);
@@ -93,8 +88,26 @@ export function useSearchWithFilters() {
         setIsLoading(false);
       }
     },
-    [searchStates, setSearchStates, buildFilters],
+    [buildFilters],
   );
+
+  const handleSearch = useCallback(
+    async (formData: FormData) => {
+      const query = formData.get("query") as string;
+      if (query?.trim()) {
+        await setSearchStates({ ...searchStates, q: query });
+        await performSearch(query);
+      }
+    },
+    [searchStates, setSearchStates, performSearch],
+  );
+
+  useEffect(() => {
+    const query = searchStates.q;
+    if (query && !hasSearched) {
+      performSearch(query);
+    }
+  }, []);
 
   return {
     searchStates,

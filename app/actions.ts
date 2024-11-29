@@ -35,20 +35,15 @@ export async function searchFurniture(
   } = {},
 ): Promise<[]> {
   const { minSimilarity = 0.42, maxResults = 6, filters = {} } = options;
-  console.log("Search query:", searchQuery); // Lisätty debug
-  console.log("Options:", options); // Lisätty debug
-  console.log("filters:", filters); // Lisätty debug
-
   try {
     const embedding = await generateSearchEmbedding(searchQuery);
     const supabase = await createClient();
 
-    // Suora kutsu tietokantafunktioon ilman ylimääräistä käsittelyä
     const { data, error } = await supabase.rpc("match_furnitures_with_filter", {
       query_embedding: embedding,
       match_threshold: minSimilarity,
       match_count: maxResults,
-      filter: filters, // Suora filters-objekti ilman muokkauksia
+      filter: filters,
     });
 
     if (error) {
