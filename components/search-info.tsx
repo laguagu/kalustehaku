@@ -26,10 +26,6 @@ export function SearchInfo() {
                 ja värien mukaan
               </li>
               <li>
-                Vihreällä korostettu tuote on parhaiten hakuasi vastaava osuma
-                tämänhetkisestä valikoimastamme
-              </li>
-              <li>
                 Jos hakemaasi tuotetta ei löydy suoraan, näytämme samankaltaisia
                 vaihtoehtoja. Listan viimeiset tulokset voivat poiketa haustasi
                 johtuen rajallisesta tuotevalikoimastamme.
