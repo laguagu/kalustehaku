@@ -103,7 +103,7 @@ export default function TavaraTradingSearch() {
               </div>
             </Suspense>
 
-            {results.some((r) => r.similarity < 0.5) && (
+            {results.some((r) => r.similarity < 0.42) && (
               <Alert className="mt-6 bg-yellow-50 border-yellow-200">
                 <AlertDescription className="text-yellow-800">
                   Jotkin hakutuloksista ovat alle 42% vastaavuudella. Kokeile
