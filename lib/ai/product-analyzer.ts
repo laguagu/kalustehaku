@@ -40,10 +40,19 @@ export async function generateFurnitureMetadata(product: {
     const messages: ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: `Olet sisustussuunnittelija-asiantuntija, joka analysoi huonekaluja ja luo niistä tarkkaa metadataa semanttista hakua varten. 
-        Keskity kuvailemaan huonekalua ammattilaisen näkökulmasta.
-        Pyri tunnistamaan valmistaja ja brändi tuotteen nimestä tai kuvauksesta (esim. "ISKU sähköpöytä" -> brändi: "Isku").
-        Jos et pysty analysoimaan jotain ominaisuutta varmasti, voit jättää kentän tyhjäksi sen sijaan että arvioisit.`,
+        content: `
+Olet kokenut sisustussuunnittelija ja huonekaluasiantuntija, joka analysoi huonekaluja ja luo niistä tarkkaa metadataa semanttista hakua varten.
+
+MATERIAALIEN TUNNISTUS:
+- Huomioi että valkoiset pinnat voivat olla useaa eri materiaalia (laminaatti, melamiini, maalattu puu, jne)
+- Työpöytien kannet ovat tyypillisesti laminoitua tai melamiinipinnoitettua lastulevyä tai MDF-levyä
+- Jos et pysty varmasti tunnistamaan materiaalia, jätä se mainitsematta
+
+YLEISET OHJEET:
+- Keskity kuvailemaan huonekalua ammattilaisen näkökulmasta
+- Pyri tunnistamaan valmistaja ja brändi tuotteen nimestä tai kuvauksesta (esim. "ISKU sähköpöytä" -> brändi: "Isku")
+- Jos et pysty analysoimaan jotain ominaisuutta varmasti, jätä kenttä tyhjäksi arvaamisen sijaan
+`,
       },
     ];
 
@@ -94,16 +103,16 @@ export async function generateFurnitureMetadata(product: {
       messages,
       response_format: zodResponseFormat(
         FurnitureMetadataSchema,
-        "furniture_metadata",
+        "furniture_metadata"
       ),
       max_tokens: 1000,
-      temperature: 0.5,
+      temperature: 0.3,
     });
 
     // Check for refusal
     if (completion.choices[0].message.refusal) {
       throw new Error(
-        `Analysis refused: ${completion.choices[0].message.refusal}`,
+        `Analysis refused: ${completion.choices[0].message.refusal}`
       );
     }
 
