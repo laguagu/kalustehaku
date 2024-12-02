@@ -72,7 +72,6 @@ export function useSearchWithFilters() {
           // Haetaan AI:n ehdottamat filtterit
           const aiFilters = await generateAIFilters(query);
           filters = { ...aiFilters };
-          console.log("AI filters:", filters);
 
           // Käsitellään värit jos niitä on
           if (aiFilters.colors && aiFilters.colors.length > 0) {
@@ -97,7 +96,6 @@ export function useSearchWithFilters() {
             ...updates,
           }));
         } else {
-          console.log("building manual filters");
           filters = buildFilters();
         }
 

@@ -29,7 +29,6 @@ export async function generateAIFilters(
       prompt: prompt,
     });
 
-    console.log(classification);
     return classification;
   } catch (error) {
     console.error("Error generating AI filters:", error);
