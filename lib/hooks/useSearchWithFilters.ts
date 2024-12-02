@@ -9,7 +9,7 @@ import {
   cleanFilters,
   expandColorGroups,
   findColorGroups,
-} from "../utils/filters";
+} from "../utils/filters-colors";
 import { useSearchStates } from "./useSearchStates";
 
 export function useSearchWithFilters() {

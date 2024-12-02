@@ -1,5 +1,6 @@
 import { SearchResult } from "@/app/page";
 import { cn } from "@/lib/utils";
+import { COLOR_HEX_MAP } from "@/lib/utils/filters-colors";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -11,8 +12,20 @@ interface ProductCardProps {
   isBestMatch?: boolean;
 }
 
+const ColorDot = ({ color }: { color: string }) => (
+  <div
+    className="w-4 h-4 rounded-full border border-border/50 shadow-sm"
+    style={{
+      background:
+        COLOR_HEX_MAP[color as keyof typeof COLOR_HEX_MAP] || "#808080",
+    }}
+    aria-label={color}
+  />
+);
+
 export function ProductCard({ result, isBestMatch }: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
+
   return (
     <Card
       className={cn(
@@ -63,7 +76,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         </div>
 
         <CardContent className="p-4 space-y-4">
-          {/* Otsikko, kategoria ja hinta */}
+          {/* Otsikko ja hinta */}
           <div className="space-y-2">
             <div className="flex items-start justify-between gap-2">
               <h3 className="font-semibold text-lg text-foreground line-clamp-3">
@@ -84,98 +97,97 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             </div>
           </div>
 
+          <div className="flex flex-wrap gap-4 ">
+            {/* Värit */}
+            {result.metadata.colors?.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Värit
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {result.metadata.colors.map((color) => (
+                    <ColorDot key={color} color={color} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Materiaalit */}
+            {result.metadata.materials?.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Materiaalit
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {result.metadata.materials.map((material, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="capitalize text-xs"
+                    >
+                      {material}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Tuotteen kuvaus */}
           {result.metadata.visualDescription && (
-            <div className="space-y-2 py-3 tracking-tight bg-secondary/20 rounded-lg">
-              <p className="text-sm font-semibold text-muted-foreground">
+            <div className="space-y-2 py-3 tracking-tight bg-secondary/20 rounded-lg pr-3">
+              <p className="text-sm font-medium text-muted-foreground">
                 Tekoälyn kuvaus tuotteesta:
               </p>
-              <p className="text-sm text-muted-foreground line-clamp-8">
+              <p className="text-sm text-muted-foreground line-clamp-6">
                 {result.metadata.visualDescription}
               </p>
             </div>
           )}
 
-          {/* Tyyli ja design */}
-          {(result.metadata.style || result.metadata.designStyle) && (
-            <div className="space-y-2">
-              <p className="text-sm font-semibold  text-muted-foreground">
-                Tyyli ja design
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {result.metadata.style && (
-                  <Badge variant="secondary" className="capitalize text-xs">
-                    {result.metadata.style}
-                  </Badge>
-                )}
-                {result.metadata.designStyle && (
-                  <Badge variant="secondary" className="capitalize text-xs">
-                    {result.metadata.designStyle}
-                  </Badge>
-                )}
+          {/* Muut ominaisuudet */}
+          <div className="flex flex-wrap gap-4">
+            {/* Tyyli */}
+            {(result.metadata.style || result.metadata.designStyle) && (
+              <div className="space-y-1.5">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Tyyli
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {result.metadata.style && (
+                    <Badge variant="secondary" className="capitalize text-xs">
+                      {result.metadata.style}
+                    </Badge>
+                  )}
+                  {result.metadata.designStyle && (
+                    <Badge variant="secondary" className="capitalize text-xs">
+                      {result.metadata.designStyle}
+                    </Badge>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Materiaalit */}
-          {result.metadata.materials?.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-muted-foreground ">
-                Materiaalit
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {result.metadata.materials.map((material, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="capitalize text-xs"
-                  >
-                    {material}
-                  </Badge>
-                ))}
+            {/* Sopii tiloihin */}
+            {result.metadata.roomType?.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Sopii tiloihin
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {result.metadata.roomType.map((room, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="capitalize text-xs"
+                    >
+                      {room}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-
-          {/* Ominaisuudet */}
-          {result.metadata.functionalFeatures?.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-muted-foreground">
-                Ominaisuudet
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {result.metadata.functionalFeatures.map((feature, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="capitalize text-xs"
-                  >
-                    {feature}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Sopii tiloihin */}
-          {result.metadata.roomType?.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-muted-foreground">
-                Sopii tiloihin
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {result.metadata.roomType.map((room, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="capitalize text-xs"
-                  >
-                    {room}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </CardContent>
       </Link>
     </Card>
