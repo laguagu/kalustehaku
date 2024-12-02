@@ -1,0 +1,9 @@
+VAIHE 1:
+1. Pöytä
+2. Sähkösäätöinen Pöytä
+3. Väriltään Valkoinen Sähkösäätöinen pöytä 
+ - Filtteröinti esimerkki valitse vaaleat
+
+VAIHE2:
+4. Klikkaa AI-buttonia ja aja vielä kerran
+5. Käytä hakusanaa: "Väriltään valkoinen Sähkösäätöinen pöytä joka on puusta"
