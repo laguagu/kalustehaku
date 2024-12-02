@@ -7,3 +7,8 @@ VAIHE 1:
 VAIHE2:
 4. Klikkaa AI-buttonia ja aja vielä kerran
 5. Käytä hakusanaa: "Väriltään valkoinen Sähkösäätöinen pöytä joka on puusta"
+
+Vaihe3:
+"Tuoli pyörillä"
+"Piiroinen tuoli"
+"Säkkituoli"
