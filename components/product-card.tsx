@@ -58,7 +58,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             priority={isBestMatch}
             onError={() => setImgError(true)}
           />
-          <div className="absolute left-2 right-2 z-20">
+          <div className="absolute left-2 top-2 z-20">
             <Badge
               variant={result.similarity > 0.8 ? "default" : "secondary"}
               className={cn(
