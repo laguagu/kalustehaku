@@ -23,7 +23,7 @@ const basicAuth = async (request: Request) => {
 
   const base64Credentials = authHeader.split(" ")[1];
   const credentials = Buffer.from(base64Credentials, "base64").toString(
-    "utf-8"
+    "utf-8",
   );
   const [username, password] = credentials.split(":");
 
@@ -43,7 +43,7 @@ async function runProcessing(options: ScraperOptions) {
   const dataType = options.isTestData ? "TEST" : "PRODUCTION";
 
   console.log(
-    `[${processType} ${dataType} Processing] Starting at ${new Date().toISOString()}`
+    `[${processType} ${dataType} Processing] Starting at ${new Date().toISOString()}`,
   );
   console.log(`Company: ${options.company}`);
   console.log(`URLs to process: ${options.urls?.length || "default"}`);
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

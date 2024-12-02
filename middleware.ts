@@ -15,7 +15,7 @@ export function middleware(request: Request) {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   }
   if (request.method === "POST") {

@@ -54,7 +54,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             alt={result.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain transition-all duration-300 group-hover:scale-105 rounded-xl p-2"
+            className="object-contain transition-all duration-300 group-hover:scale-105 bg-secondary rounded-2xl p-2 "
             priority={isBestMatch}
             onError={() => setImgError(true)}
           />
@@ -101,7 +101,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             {/* Värit */}
             {result.metadata.colors?.length > 0 && (
               <div className="space-y-1.5">
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-md font-medium text-muted-foreground">
                   Värit
                 </p>
                 <div className="flex flex-wrap gap-1">
@@ -115,7 +115,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             {/* Materiaalit */}
             {result.metadata.materials?.length > 0 && (
               <div className="space-y-1.5">
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-md font-medium text-muted-foreground">
                   Materiaalit
                 </p>
                 <div className="flex flex-wrap gap-1">
@@ -136,7 +136,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
           {/* Tuotteen kuvaus */}
           {result.metadata.visualDescription && (
             <div className="space-y-2 py-3 tracking-tight bg-secondary/20 rounded-lg pr-3">
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-md font-medium text-muted-foreground">
                 Tekoälyn kuvaus tuotteesta:
               </p>
               <p className="text-sm text-muted-foreground line-clamp-6">
@@ -150,7 +150,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             {/* Tyyli */}
             {(result.metadata.style || result.metadata.designStyle) && (
               <div className="space-y-1.5">
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-md font-medium text-muted-foreground">
                   Tyyli
                 </p>
                 <div className="flex flex-wrap gap-1">
@@ -171,7 +171,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             {/* Sopii tiloihin */}
             {result.metadata.roomType?.length > 0 && (
               <div className="space-y-1.5">
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-md font-medium text-muted-foreground">
                   Sopii tiloihin
                 </p>
                 <div className="flex flex-wrap gap-1">
