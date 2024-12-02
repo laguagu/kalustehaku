@@ -37,7 +37,7 @@ BEGIN
       filter = '{}'::jsonb
       OR (
         -- Tarkista muut metadata-kentät paitsi värit
-        (metadata_filter = '{}'::jsonb OR products.metadata @> metadata_filter)
+            products.metadata @> metadata_filter
         AND
         -- Tarkista värit: palauta true jos yksikin väri täsmää
         (

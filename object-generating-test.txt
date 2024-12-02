@@ -1,0 +1,45 @@
+Normaali objektin generointi perinteisella tavalla OpenAI kautta käyttäen "response_format: { type: "json_object" },"
+vs 
+Verel ai SDK generateObject funktiota käyttäen.
+
+Hakusana:
+
+Värikäs pöytä puusta
+ openai:
+    Execution time: 2.42s
+    Token usage: { prompt_tokens: 388, completion_tokens: 32, total_tokens: 420 }
+ vercel ai: 
+    Execution time: 1.28s
+    Token usage: { prompt_tokens: 422, completion_tokens: 24, total_tokens: 446 }
+ 
+Tuoli
+ openai:
+    Execution time: 0.84s
+    Token usage: { prompt_tokens: 382, completion_tokens: 26, total_tokens: 408 }
+ vercel ai: 
+    Execution time: 1.00s
+    Token usage: { prompt_tokens: 416, completion_tokens: 14, total_tokens: 430 }
+ 
+Etsinnässä olisi toimistoon modernia säädettävää sähköpöytää joka saisi olla luonnollinen iloinen väritys
+ openai:
+    Execution time: 0.98s
+    Token usage: { prompt_tokens: 410, completion_tokens: 31, total_tokens: 441 }
+ vercel ai: 
+    Execution time: 0.81s
+    Token usage: { prompt_tokens: 444, completion_tokens: 21, total_tokens: 465 }
+    
+ 
+Musta koivu tuoli
+ openai:
+    Execution time: 0.96s
+    Token usage: { prompt_tokens: 386, completion_tokens: 28, total_tokens: 414 }
+ vercel ai: 
+    Execution time: 1.38s
+    Token usage: { prompt_tokens: 420, completion_tokens: 26, total_tokens: 446 }
+ 
+Lopputulos:
+Nopealla kokeilulla Vercel ai SDK total_tokens käyttö oli pari tokenia kalliimpaa,
+mutta koodi on helpommin ymmärrettävissä ja ylläpidettävissä. Sekä tiedämme että saamme aina odotetun JSON palautuksen.
+Nopeudelliset erot johtuvat OpenAI API:n päästä ja en usko että toteutus tavalla on väliä.
+Mietin itse aiheuttaako vercelin generateObject käyttö viivettä, mutta johtopäätökseni on että ei ja mahdollinen viive johtuu OpenAI rajapinnasta.
+Päädyin käyttämään generateObject funktiota.

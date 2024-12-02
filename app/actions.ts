@@ -2,16 +2,52 @@
 "use server";
 
 import { createClient } from "@/lib/db/supabase/server-client";
-import { ProductMetadata } from "@/lib/types/metadata/metadata";
-import OpenAI from "openai";
+import {
+  FurnitureFiltterObject,
+  ProductMetadata,
+} from "@/lib/types/metadata/metadata";
+import { openai } from "@ai-sdk/openai";
+import { generateObject } from "ai";
+import { OpenAI } from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+export async function generateAIFilters(
+  searchQuery: string,
+): Promise<Partial<ProductMetadata>> {
+  const prompt = `
+  Olet huonekaluasiantuntija. Analysoi käyttäjän hakuteksti ja
+  palauta filtterit JSON-muodossa. 
+  Jos et ole varma jostain kentästä, palauta sille tyhjä arvo.
+
+  Hakuteksti:
+  ${searchQuery}
+  `;
+
+  try {
+    const { object: classification } = await generateObject({
+      model: openai("gpt-4o", { structuredOutputs: true }),
+      schema: FurnitureFiltterObject,
+      prompt: prompt,
+    });
+
+    console.log(classification);
+    return classification;
+  } catch (error) {
+    console.error("Error generating AI filters:", error);
+    return {
+      mainGategory: undefined,
+      materials: [],
+      colors: [],
+    };
+  }
+}
 
 export async function generateSearchEmbedding(
   searchText: string,
 ): Promise<number[]> {
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
   try {
     const response = await openai.embeddings.create({
       model: "text-embedding-3-small",

@@ -16,11 +16,11 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
   return (
     <Card
       className={cn(
-        "overflow-hidden transition-all duration-200",
-        "bg-white hover:bg-gray-50",
+        "overflow-hidden transition-all duration-200 group",
+        "bg-card hover:bg-secondary/20",
         isBestMatch
-          ? "ring-2 ring-green-500 shadow-md"
-          : "shadow-sm hover:shadow-md",
+          ? "ring-2 ring-primary shadow-md"
+          : "border-border/50 hover:border-primary/50 shadow-sm hover:shadow-md",
       )}
     >
       <Link
@@ -29,9 +29,9 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         rel="noopener noreferrer"
         className="block h-full no-underline group"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-50">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted group-hover:bg-muted/70 transition-colors">
           {isBestMatch && (
-            <div className="absolute left-0 top-0 z-20 bg-green-500 text-white px-3 py-1 rounded-br-lg font-medium">
+            <div className="absolute left-0 top-0 z-20 bg-primary text-primary-foreground px-3 py-1.5 rounded-br-lg font-medium shadow-sm">
               Paras osuma
             </div>
           )}
@@ -41,15 +41,21 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             alt={result.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain transition-transform duration-300 group-hover:scale-105 rounded-xl"
+            className="object-contain transition-all duration-300 group-hover:scale-105 rounded-xl p-2"
             priority={isBestMatch}
             onError={() => setImgError(true)}
           />
-
           <div className="absolute top-2 right-2 z-20">
             <Badge
               variant={result.similarity > 0.8 ? "default" : "secondary"}
-              className={cn("shadow-sm", isBestMatch && "bg-green-500")}
+              className={cn(
+                "shadow-sm font-bold",
+                isBestMatch
+                  ? "bg-primary text-primary-foreground"
+                  : result.similarity > 0.7
+                    ? "bg-primary/80 text-primary-foreground"
+                    : "bg-secondary",
+              )}
             >
               {(result.similarity * 100).toFixed(0)}% vastaavuus
             </Badge>
@@ -60,23 +66,19 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
           {/* Otsikko, kategoria ja hinta */}
           <div className="space-y-2">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold text-lg line-clamp-3">
+              <h3 className="font-semibold text-lg text-foreground line-clamp-3">
                 {result.name}
               </h3>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xl font-bold text-green-600">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+              <span className="text-2xl font-bold text-primary order-2 sm:order-1">
                 {result.price ? `${result.price} €` : "Hinta ei saatavilla"}
               </span>
-              <Badge
-                variant={result.similarity > 0.8 ? "default" : "secondary"}
-                className={cn(
-                  "shadow-sm whitespace-nowrap",
-                  isBestMatch && "bg-green-500",
-                )}
-              >
-                {result.metadata.category && (
-                  <span className="capitalize">{result.metadata.category}</span>
+              <Badge variant="secondary" className="order-1 sm:order-2 w-fit">
+                {result.metadata.mainGategory && (
+                  <span className="capitalize text-base">
+                    {result.metadata.mainGategory}
+                  </span>
                 )}
               </Badge>
             </div>
@@ -84,11 +86,11 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
 
           {/* Tuotteen kuvaus */}
           {result.metadata.visualDescription && (
-            <div className="space-y-2">
-              <p className="text-xs font-semibold text-black">
+            <div className="space-y-2 py-3 tracking-tight bg-secondary/20 rounded-lg">
+              <p className="text-sm font-semibold text-muted-foreground">
                 Tekoälyn kuvaus tuotteesta:
               </p>
-              <p className="text-sm text-gray-600 line-clamp-8">
+              <p className="text-sm text-muted-foreground line-clamp-8">
                 {result.metadata.visualDescription}
               </p>
             </div>
@@ -96,30 +98,40 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
 
           {/* Tyyli ja design */}
           {(result.metadata.style || result.metadata.designStyle) && (
-            <div className="flex flex-wrap gap-2 ">
-              {result.metadata.style && (
-                <Badge variant="secondary">
-                  <span className="capitalize">{result.metadata.style}</span>
-                </Badge>
-              )}
-              {result.metadata.designStyle && (
-                <Badge variant="secondary">{result.metadata.designStyle}</Badge>
-              )}
+            <div className="space-y-2">
+              <p className="text-sm font-semibold  text-muted-foreground">
+                Tyyli ja design
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {result.metadata.style && (
+                  <Badge variant="secondary" className="capitalize text-xs">
+                    {result.metadata.style}
+                  </Badge>
+                )}
+                {result.metadata.designStyle && (
+                  <Badge variant="secondary" className="capitalize text-xs">
+                    {result.metadata.designStyle}
+                  </Badge>
+                )}
+              </div>
             </div>
           )}
 
           {/* Materiaalit */}
           {result.metadata.materials?.length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-gray-500">Materiaalit</p>
-              <div className="flex flex-wrap gap-1">
+              <p className="text-sm font-semibold text-muted-foreground ">
+                Materiaalit
+              </p>
+              <div className="flex flex-wrap gap-1.5">
                 {result.metadata.materials.map((material, index) => (
-                  <span
+                  <Badge
                     key={index}
-                    className="capitalize text-xs bg-gray-50 px-2 py-1 rounded-full"
+                    variant="secondary"
+                    className="capitalize text-xs"
                   >
                     {material}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -128,15 +140,18 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
           {/* Ominaisuudet */}
           {result.metadata.functionalFeatures?.length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-gray-500">Ominaisuudet</p>
-              <div className="flex flex-wrap gap-1">
+              <p className="text-sm font-semibold text-muted-foreground">
+                Ominaisuudet
+              </p>
+              <div className="flex flex-wrap gap-1.5">
                 {result.metadata.functionalFeatures.map((feature, index) => (
-                  <span
+                  <Badge
                     key={index}
-                    className="capitalize text-xs bg-gray-50 px-2 py-1 rounded-full"
+                    variant="secondary"
+                    className="capitalize text-xs"
                   >
                     {feature}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -145,15 +160,15 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
           {/* Sopii tiloihin */}
           {result.metadata.roomType?.length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-gray-500">
+              <p className="text-sm font-semibold text-muted-foreground">
                 Sopii tiloihin
               </p>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1.5">
                 {result.metadata.roomType.map((room, index) => (
                   <Badge
                     key={index}
-                    variant="outline"
-                    className="text-xs bg-green-50 capitalize"
+                    variant="secondary"
+                    className="capitalize text-xs"
                   >
                     {room}
                   </Badge>

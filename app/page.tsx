@@ -19,6 +19,7 @@ export interface SearchResult {
     materials: string[];
     colors: string[];
     category: string;
+    mainGategory: string;
     roomType: string[];
     functionalFeatures: string[];
     designStyle: string;
@@ -45,11 +46,10 @@ export default function TavaraTradingSearch() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100/60">
+    <div className="min-h-screen bg-secondary/40">
       <div className="w-full max-w-6xl mx-auto p-4 space-y-6">
-        {/* Hero section */}
         <div className="text-center py-8">
-          <h1 className="md:text-4xl text-3xl font-bold text-gray-900">
+          <h1 className="md:text-4xl text-3xl font-bold text-foreground">
             Älykäs huonekaluhaku
           </h1>
         </div>
@@ -67,7 +67,7 @@ export default function TavaraTradingSearch() {
 
         {/* Results section */}
         {!isLoading && results.length > 0 && (
-          <div className="pt-8">
+          <div className="bg-card rounded-xl shadow-sm p-6 space-y-6">
             <div className="hidden md:flex justify-between items-center mb-6">
               <div className="space-y-2">
                 <h2 className="text-2xl font-semibold text-gray-900">
@@ -79,13 +79,13 @@ export default function TavaraTradingSearch() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-gray-50">
+                <Badge variant="outline" className="bg-background">
                   90-100% = Erinomainen vastaavuus
                 </Badge>
-                <Badge variant="outline" className="bg-gray-50">
+                <Badge variant="outline" className="bg-background">
                   70-89% = Hyvä vastaavuus
                 </Badge>
-                <Badge variant="outline" className="bg-gray-50">
+                <Badge variant="outline" className="bg-background">
                   42-69% = Kohtalainen vastaavuus
                 </Badge>
               </div>
@@ -116,7 +116,7 @@ export default function TavaraTradingSearch() {
 
         {/* No results state */}
         {!isLoading && results.length === 0 && hasSearched && !error && (
-          <div className="text-center py-16 bg-white rounded-lg shadow-sm">
+          <div className="text-center py-16 bg-card rounded-lg shadow-sm">
             <div className="max-w-md mx-auto space-y-4">
               <p className="text-gray-500 text-lg">
                 Hakusanalla ei löytynyt tuloksia

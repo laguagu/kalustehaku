@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, SlidersHorizontal } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal } from "lucide-react";
 import React, { useState } from "react";
 import { SearchInfo } from "./search-info";
 
@@ -37,9 +37,7 @@ export default function SearchForm({
       <Card className="border-0 shadow-lg">
         <CardHeader className="pb-2">
           <CardTitle className="text-xl">Huonekaluhaku</CardTitle>
-          <CardDescription>
-            Kuvaile haluamaasi huonekalua mahdollisimman tarkasti
-          </CardDescription>
+          <CardDescription>Kuvaile etsimääsi huonekalua</CardDescription>
         </CardHeader>
         <CardContent>
           <form
@@ -49,32 +47,33 @@ export default function SearchForm({
               handleSearch(formData);
             }}
           >
-            <div className="flex gap-3">
+            <div className="flex flex-col md:flex-row gap-3">
               <Input
                 type="text"
                 name="query"
-                placeholder="Esim: Moderni valkoinen sähköpöytä työhuoneeseen..."
+                placeholder="Esim: Säädettävä sähköpöytä..."
                 value={searchStates.q}
                 onChange={handleQueryChange}
-                className="flex-1"
+                className="flex-1 min-h-[3rem] md:min-h-0"
               />
               <Button
                 type="submit"
                 disabled={isLoading || !searchStates.q.trim()}
+                className="md:w-20 h-auto"
               >
                 {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Haetaan...
-                  </>
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  "Hae"
+                  <>
+                    <Search className="h-4 w-4 mr-2" />
+                    Hae
+                  </>
                 )}
               </Button>
               <Button
                 type="button"
                 variant="outline"
-                className={`px-3 ${isFilterOpen ? "bg-gray-100" : ""}`}
+                className={`h-auto px-3 ${isFilterOpen ? "bg-gray-200" : ""}`}
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
               >
                 <SlidersHorizontal className="h-4 w-4" />
@@ -93,7 +92,7 @@ export default function SearchForm({
             transition={{ duration: 0.2 }}
             className="w-full"
           >
-            <Card className="border-0 shadow-lg bg-white">
+            <Card className="border-0 shadow-lg bg-card">
               <CardContent className="pt-6">
                 <SearchFilters />
               </CardContent>

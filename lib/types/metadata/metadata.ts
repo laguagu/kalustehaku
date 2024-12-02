@@ -159,6 +159,12 @@ export const FurnitureMetadataSchema = z.object({
     ),
 });
 
+export const FurnitureFiltterObject = z.object({
+  mainGategory: FurnitureMainCategoryEnum.describe("Pääkategoria)"),
+  materials: z.array(FurnitureMaterialEnum).describe("Päämateriaalit listana"),
+  colors: z.array(FurnitureColorEnum).describe("Päävärit ja sävyt listana"),
+});
+
 export type ProductMetadata = z.infer<typeof FurnitureMetadataSchema>;
 export type ConditionEnum = z.infer<typeof ConditionEnum>;
 export type RoomTypeEnum = z.infer<typeof RoomTypeEnum>;

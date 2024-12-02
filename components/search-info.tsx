@@ -8,7 +8,7 @@ import { Alert } from "@/components/ui/alert";
 
 export function SearchInfo() {
   return (
-    <Alert className="">
+    <Alert className="bg-background">
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="search-info" className="border-none">
           <AccordionTrigger className="p-0 hover:no-underline text-blue-900 font-medium">
@@ -17,7 +17,7 @@ export function SearchInfo() {
           <AccordionContent>
             <ul className="list-disc pl-4 space-y-1 mt-2 text-muted-foreground">
               <li>
-                Tekoäly ymmärtää luonnollista kieltä - voit kuvailla haluamaasi
+                Tekoäly ymmärtää luonnollista kieltä - voit kuvailla etsimääsi
                 huonekalua vapaasti (esim. &quot;Väriltään valkoinen
                 toimistopöytä&quot;)
               </li>

@@ -1,38 +1,33 @@
-import { searchFurniture } from "@/app/actions";
-import { SearchResult } from "@/app/page";
-import { parseAsString, useQueryStates } from "nuqs";
-import { useCallback, useEffect, useState } from "react";
-import { COLOR_GROUPS_MAP } from "../types/filters/colorGroups";
+import { generateAIFilters, searchFurniture } from "@/app/actions";
+import { useCallback, useEffect } from "react";
 import {
   FurnitureMainCategoryEnum,
   FurnitureMaterialEnum,
   ProductMetadata,
 } from "../types/metadata/metadata";
+import {
+  cleanFilters,
+  expandColorGroups,
+  findColorGroups,
+} from "../utils/filters";
+import { useSearchStates } from "./useSearchStates";
 
 export function useSearchWithFilters() {
-  const [searchStates, setSearchStates] = useQueryStates(
-    {
-      q: parseAsString.withDefault(""),
-      cat: parseAsString.withDefault(""),
-      mat: parseAsString.withDefault(""),
-      col: parseAsString.withDefault(""),
-    },
-    {
-      history: "replace",
-      shallow: false,
-    },
-  );
-
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const expandColorGroups = (colorGroups: string[]): string[] => {
-    return colorGroups.flatMap(
-      (group) => COLOR_GROUPS_MAP[group as keyof typeof COLOR_GROUPS_MAP] || [],
-    );
-  };
+  const {
+    searchStates,
+    setSearchStates,
+    results,
+    setResults,
+    error,
+    setError,
+    hasSearched,
+    setHasSearched,
+    isLoading,
+    setIsLoading,
+  } = useSearchStates();
+  // useEffect(() => {
+  //   console.log("searchStates", searchStates);
+  // }, [searchStates]);
 
   const buildFilters = useCallback(() => {
     const filters: Partial<ProductMetadata> = {};
@@ -61,7 +56,7 @@ export function useSearchWithFilters() {
     }
 
     return Object.keys(filters).length > 0 ? filters : undefined;
-  }, [searchStates.cat, searchStates.mat, searchStates.col]);
+  }, [searchStates]);
 
   const performSearch = useCallback(
     async (query: string) => {
@@ -71,12 +66,47 @@ export function useSearchWithFilters() {
       setHasSearched(true);
 
       try {
-        const filters = buildFilters();
+        let filters;
+
+        if (searchStates.ai) {
+          // Haetaan AI:n ehdottamat filtterit
+          const aiFilters = await generateAIFilters(query);
+          filters = { ...aiFilters };
+          console.log("AI filters:", filters);
+
+          // Käsitellään värit jos niitä on
+          if (aiFilters.colors && aiFilters.colors.length > 0) {
+            const colorGroups = findColorGroups(aiFilters.colors);
+            const expandedColors = expandColorGroups(colorGroups);
+            if (expandedColors.length > 0) {
+              filters.colors = expandedColors as ProductMetadata["colors"];
+            }
+          }
+
+          // Päivitetään URL-parametrit erillään väritarkistuksesta
+          const updates: Partial<typeof searchStates> = {
+            cat: aiFilters.mainGategory || "",
+            mat: aiFilters.materials?.join(",") || "",
+            col: aiFilters.colors?.length
+              ? findColorGroups(aiFilters.colors).join(",")
+              : "",
+          };
+
+          await setSearchStates((prev) => ({
+            ...prev,
+            ...updates,
+          }));
+        } else {
+          console.log("building manual filters");
+          filters = buildFilters();
+        }
+
+        const cleanedFilters = cleanFilters(filters);
 
         const searchResults = await searchFurniture(query, {
           minSimilarity: 0.42,
           maxResults: 6,
-          ...(filters && { filters }),
+          ...(cleanedFilters && { filters: cleanedFilters }),
         });
 
         setResults(searchResults);
@@ -88,7 +118,7 @@ export function useSearchWithFilters() {
         setIsLoading(false);
       }
     },
-    [buildFilters],
+    [buildFilters, searchStates.ai, setSearchStates],
   );
 
   const handleSearch = useCallback(
@@ -107,6 +137,7 @@ export function useSearchWithFilters() {
     if (query && !hasSearched) {
       performSearch(query);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
