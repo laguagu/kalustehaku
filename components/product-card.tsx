@@ -33,7 +33,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         "bg-card md:hover:bg-secondary/20",
         isBestMatch
           ? "ring-2 ring-primary shadow-md"
-          : "border-border/50 md:hover:border-primary/50 shadow-sm md:hover:shadow-md",
+          : "border-border/50 md:hover:border-primary/50 shadow-sm md:hover:shadow-md"
       )}
     >
       <Link
@@ -44,7 +44,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
       >
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted md:group-hover:bg-muted/70 transition-colors">
           {isBestMatch && (
-            <div className="absolute left-0 top-0 z-20 bg-primary text-primary-foreground px-3 py-1.5 rounded-br-lg font-medium shadow-sm">
+            <div className="absolute right-0 top-0 z-20 bg-primary text-primary-foreground px-3 py-1.5 rounded-bl-lg font-medium shadow-sm">
               Paras osuma
             </div>
           )}
@@ -58,16 +58,16 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             priority={isBestMatch}
             onError={() => setImgError(true)}
           />
-          <div className="absolute top-2 right-2 z-20">
+          <div className="absolute left-2 right-2 z-20">
             <Badge
               variant={result.similarity > 0.8 ? "default" : "secondary"}
               className={cn(
                 "shadow-sm font-bold",
                 isBestMatch
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-primary-foreground hover:bg-primary"
                   : result.similarity > 0.7
                     ? "bg-primary/80 text-primary-foreground"
-                    : "bg-secondary",
+                    : "bg-secondary"
               )}
             >
               {(result.similarity * 100).toFixed(0)}% vastaavuus
