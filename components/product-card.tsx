@@ -30,10 +30,10 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
     <Card
       className={cn(
         "overflow-hidden transition-all duration-200 group",
-        "bg-card hover:bg-secondary/20",
+        "bg-card md:hover:bg-secondary/20",
         isBestMatch
           ? "ring-2 ring-primary shadow-md"
-          : "border-border/50 hover:border-primary/50 shadow-sm hover:shadow-md",
+          : "border-border/50 md:hover:border-primary/50 shadow-sm md:hover:shadow-md",
       )}
     >
       <Link
@@ -42,7 +42,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         rel="noopener noreferrer"
         className="block h-full no-underline group"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted group-hover:bg-muted/70 transition-colors">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted md:group-hover:bg-muted/70 transition-colors">
           {isBestMatch && (
             <div className="absolute left-0 top-0 z-20 bg-primary text-primary-foreground px-3 py-1.5 rounded-br-lg font-medium shadow-sm">
               Paras osuma
@@ -54,7 +54,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             alt={result.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain transition-all duration-300 group-hover:scale-105 bg-secondary rounded-2xl p-2 "
+            className="object-contain transition-all duration-300 md:group-hover:scale-105 bg-secondary rounded-2xl p-2 "
             priority={isBestMatch}
             onError={() => setImgError(true)}
           />

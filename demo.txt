@@ -12,3 +12,7 @@ Vaihe3:
 "Tuoli pyörillä"
 "Piiroinen tuoli"
 "Säkkituoli"
+
+Vaihe 4: Selitä prosenteista:
+ - Työtuoli - 63%
+ - Työtuoli jossa on korkea selkänoja ja niskatuki - 72%
