@@ -146,7 +146,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
           )}
 
           {/* Muut ominaisuudet */}
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-col flex-wrap gap-4">
             {/* Tyyli */}
             {(result.metadata.style || result.metadata.designStyle) && (
               <div className="space-y-1.5">

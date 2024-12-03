@@ -37,3 +37,21 @@ export function middleware(request: Request) {
 export const config = {
   matcher: "/api/webscrapers/:path*",
 };
+
+
+// if (request.method === "POST") {
+//   // Skip CSRF check for cron jobs
+//   const isCronJob = request.headers.get('x-vercel-cron') === process.env.CRON_SECRET;
+  
+//   if (!isCronJob) {
+//     // Regular CSRF check for non-cron requests
+//     const origin = request.headers.get("origin");
+//     const host = request.headers.get("host");
+
+//     if (origin && host && new URL(origin).host !== host) {
+//       return new NextResponse(JSON.stringify({ error: "Invalid origin" }), {
+//         status: 403,
+//       });
+//     }
+//   }
+// }
