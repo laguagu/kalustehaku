@@ -98,7 +98,7 @@ CREATE OR REPLACE FUNCTION match_furnitures_with_filter (
   match_threshold float,
   match_count int,
   filter jsonb DEFAULT '{}'::jsonb
-) 
+)
 RETURNS TABLE (
   id text,
   name text,
@@ -267,7 +267,7 @@ export default function TavaraTradingSearch() {
     const searchResults = await searchFurniture(searchQuery, {
       minSimilarity: 0.25,
       maxResults: 6,
-      filters: {}
+      filters: {},
     });
     // ...
   }

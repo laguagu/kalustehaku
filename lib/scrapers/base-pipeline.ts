@@ -137,7 +137,6 @@ async function processUrl(
   }
 }
 
-
 export async function processProducts(
   scrapeProductsFn: (
     url: string,
@@ -187,7 +186,7 @@ export async function processProducts(
 
     // Yhdistä kaikki onnistuneesti scrapatut tuotteet
     allScrapedProducts = urlResults.flat();
-    console.log('\nScraped products length:', allScrapedProducts.length);
+    console.log("\nScraped products length:", allScrapedProducts.length);
 
     // Jos scraping onnistui ilman virheitä, synkronoidaan tuotteet
     if (results.scraping.errors.length === 0) {
@@ -201,7 +200,9 @@ export async function processProducts(
       // Lisää sync tulokset kokonaistuloksiin
       results.scraping.errors.push(...syncResults.scraping.errors);
       if (syncResults.removedProducts?.length > 0) {
-        console.log(`Removed ${syncResults.removedProducts.length} outdated products`);
+        console.log(
+          `Removed ${syncResults.removedProducts.length} outdated products`,
+        );
         results.products.push(...syncResults.removedProducts);
       }
     } else {

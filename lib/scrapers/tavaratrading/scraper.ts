@@ -97,27 +97,30 @@ export async function scrapeProducts(
   async function retryOperation<T>(
     operation: () => Promise<T>,
     maxRetries: number = 3,
-    retryDelay: number = 3000
+    retryDelay: number = 3000,
   ): Promise<T> {
     for (let i = 0; i < maxRetries; i++) {
       try {
         return await operation();
       } catch (error) {
-        console.error(`Operation failed (Attempt ${i + 1}/${maxRetries}):`, error);
-
-        const needsReinit = error instanceof Error && (
-          error.message.includes('Target closed') || 
-          error.message.includes('Protocol error') ||
-          error.message.includes('detached Frame') ||
-          error.message.includes('Session closed')
+        console.error(
+          `Operation failed (Attempt ${i + 1}/${maxRetries}):`,
+          error,
         );
 
+        const needsReinit =
+          error instanceof Error &&
+          (error.message.includes("Target closed") ||
+            error.message.includes("Protocol error") ||
+            error.message.includes("detached Frame") ||
+            error.message.includes("Session closed"));
+
         if (needsReinit) {
-          console.log('Browser session closed or detached, reinitializing...');
-          
+          console.log("Browser session closed or detached, reinitializing...");
+
           if (page) await page.close().catch(() => {});
           if (browser) await browser.close().catch(() => {});
-          
+
           // Reinitialize browser
           browser = await puppeteer.launch({
             headless: true,
@@ -130,34 +133,34 @@ export async function scrapeProducts(
               "--disable-features=IsolateOrigins,site-per-process",
             ],
           });
-          
+
           page = await browser.newPage();
 
           // Re-navigate to the original URL and set up page
           await page.goto(url, { waitUntil: "networkidle0", timeout: 60000 });
           await page.waitForSelector("#items_per_page", { timeout: 30000 });
-          
+
           // Re-select "Show All" option
           await page.select("#items_per_page", "all");
-          await page.waitForNavigation({ 
+          await page.waitForNavigation({
             waitUntil: "networkidle0",
-            timeout: 60000 
+            timeout: 60000,
           });
-          
+
           // Give extra time for the page to stabilize
-          await new Promise(resolve => setTimeout(resolve, 5000));
+          await new Promise((resolve) => setTimeout(resolve, 5000));
         }
 
         if (i < maxRetries - 1) {
           const waitTime = retryDelay * Math.pow(2, i);
-          console.log(`Retrying in ${waitTime/1000} seconds...`);
-          await new Promise(resolve => setTimeout(resolve, waitTime));
+          console.log(`Retrying in ${waitTime / 1000} seconds...`);
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
         } else {
           throw error;
         }
       }
     }
-    throw new Error('Operation failed after all retries');
+    throw new Error("Operation failed after all retries");
   }
 
   try {
@@ -185,18 +188,20 @@ export async function scrapeProducts(
       await page!.goto(url, { waitUntil: "networkidle0", timeout: 60000 });
       await page!.waitForSelector("#items_per_page", { timeout: 30000 });
       await page!.select("#items_per_page", "all");
-      await page!.waitForNavigation({ 
+      await page!.waitForNavigation({
         waitUntil: "networkidle0",
-        timeout: 60000 
+        timeout: 60000,
       });
       // Give extra time for the page to stabilize
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     });
 
     // Wrap product scraping in retry
     await retryOperation(async () => {
       console.log("Scraping products...");
-      const productElements = await page!.$$(".product_list_wrapper .listatuote");
+      const productElements = await page!.$$(
+        ".product_list_wrapper .listatuote",
+      );
       console.log(`Found ${productElements.length} products on page`);
 
       if (productElements.length === 0) {
@@ -215,33 +220,37 @@ export async function scrapeProducts(
           // Wrap individual product scraping in retry
           const product = await retryOperation(async () => {
             const productUrl = await safeGetProductUrl(element);
-            const imageUrl = await element.$eval(".kuva img", (img) => {
-              const dataSrc = img.getAttribute("data-src");
-              if (dataSrc) {
-                return `https://www.tavaratrading.com${dataSrc}`;
-              }
-              const src = img.getAttribute("src");
-              return src
-                ? src.startsWith("http")
-                  ? src
-                  : `https://www.tavaratrading.com${src}`
-                : "";
-            }).catch(() => "");
+            const imageUrl = await element
+              .$eval(".kuva img", (img) => {
+                const dataSrc = img.getAttribute("data-src");
+                if (dataSrc) {
+                  return `https://www.tavaratrading.com${dataSrc}`;
+                }
+                const src = img.getAttribute("src");
+                return src
+                  ? src.startsWith("http")
+                    ? src
+                    : `https://www.tavaratrading.com${src}`
+                  : "";
+              })
+              .catch(() => "");
 
             const bigImageUrl = convertToBigImageUrl(imageUrl);
 
             return {
-              id: (await safeGetAttribute(element, ".kuva a", "name"))?.replace(
-                "product_",
-                "",
-              ) || "",
+              id:
+                (await safeGetAttribute(element, ".kuva a", "name"))?.replace(
+                  "product_",
+                  "",
+                ) || "",
               name,
               description: await safeGetText(element, ".subtitle"),
               price: safeParsePrice(await safeGetText(element, ".price_out")),
               condition: (await safeGetText(element, ".kunto")) || "",
               imageUrl: bigImageUrl,
               category: url.split("/").pop() || "",
-              availability: (await safeGetText(element, ".availability p")) || "",
+              availability:
+                (await safeGetText(element, ".availability p")) || "",
               productUrl: productUrl || "",
               company: config.company,
             } as ScrapedProduct;

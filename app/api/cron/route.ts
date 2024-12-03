@@ -16,7 +16,7 @@ export async function GET() {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -33,7 +33,7 @@ export async function POST() {
           success: false,
           message: "Scraping is already in progress",
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST() {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

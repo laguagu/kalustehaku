@@ -28,7 +28,7 @@ function getUrlCategory(url: string, company: string): string {
       const pathParts = urlObject.pathname.split("/");
       // Etsitään "kaytetyt-" alkuinen osa ja poistetaan "kaytetyt-" etuliite
       const categoryPart = pathParts.find((part) =>
-        part.startsWith("kaytetyt-")
+        part.startsWith("kaytetyt-"),
       );
       if (categoryPart) {
         return categoryPart.replace("kaytetyt-", "");
@@ -59,7 +59,7 @@ function normalizeCategory(category: string): string {
 
 export async function syncProducts(
   scrapedProducts: ScrapedProduct[],
-  options: SyncOptions
+  options: SyncOptions,
 ): Promise<SyncResult> {
   const scrapedIds = scrapedProducts.map((product) => product.id);
 
@@ -79,25 +79,25 @@ export async function syncProducts(
     const urlCategories = new Set(
       options.urls
         .map((url) => getUrlCategory(url, options.company))
-        .map((category) => normalizeCategory(category))
+        .map((category) => normalizeCategory(category)),
     );
 
     // Hae scrapatut kategoriat tuotteista
     const scrapedCategories = new Set(
-      scrapedProducts.map((product) => normalizeCategory(product.category))
+      scrapedProducts.map((product) => normalizeCategory(product.category)),
     );
 
     console.log(`Expected URLs: ${options.urls.length}`);
     console.log(`Found products from URLs: ${scrapedProducts.length}`);
     console.log(`Expected categories: ${Array.from(urlCategories).join(", ")}`);
     console.log(
-      `Found categories: ${Array.from(scrapedCategories).join(", ")}`
+      `Found categories: ${Array.from(scrapedCategories).join(", ")}`,
     );
     console.log(`Total scraped products: ${scrapedProducts.length}`);
 
     // Tarkista puuttuvat kategoriat
     const missingCategories = Array.from(urlCategories).filter(
-      (urlCategory) => !scrapedCategories.has(urlCategory)
+      (urlCategory) => !scrapedCategories.has(urlCategory),
     );
 
     // Jos kategorioita puuttuu, älä poista tuotteita
@@ -113,7 +113,7 @@ export async function syncProducts(
       where: and(
         eq(products.company, options.company),
         eq(products.isTestData, options.isTestData || false),
-        notInArray(products.id, scrapedIds)
+        notInArray(products.id, scrapedIds),
       ),
     });
 
@@ -127,8 +127,8 @@ export async function syncProducts(
           .where(
             and(
               eq(products.id, product.id),
-              eq(products.company, options.company)
-            )
+              eq(products.company, options.company),
+            ),
           );
 
         syncResults.removedProducts.push({

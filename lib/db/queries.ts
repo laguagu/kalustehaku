@@ -38,7 +38,6 @@ export async function upsertProduct(preparedProduct: PreparedProduct) {
   });
 
   if (!existing) {
-
     return await db.insert(products).values(preparedProduct);
   }
 

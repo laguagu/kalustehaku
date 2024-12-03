@@ -18,7 +18,7 @@ async function runProcessing(options: ScraperOptions) {
   const dataType = options.isTestData ? "TEST" : "PRODUCTION";
 
   console.log(
-    `[${dataType} Processing] Starting at ${new Date().toISOString()}`
+    `[${dataType} Processing] Starting at ${new Date().toISOString()}`,
   );
   console.log(`Company: ${options.company}`);
   console.log(`URLs to process: ${options.urls?.length || "default"}`);
@@ -29,7 +29,7 @@ async function runProcessing(options: ScraperOptions) {
       scrapers[options.company.toLowerCase() as keyof typeof scrapers];
     if (!processFunction) {
       throw new Error(`Invalid scraper specified: ${options.company}`);
-    } 
+    }
 
     const results = await processFunction(options);
 
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

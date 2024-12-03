@@ -103,7 +103,7 @@ YLEISET OHJEET:
       messages,
       response_format: zodResponseFormat(
         FurnitureMetadataSchema,
-        "furniture_metadata"
+        "furniture_metadata",
       ),
       max_tokens: 1000,
       temperature: 0.3,
@@ -112,7 +112,7 @@ YLEISET OHJEET:
     // Check for refusal
     if (completion.choices[0].message.refusal) {
       throw new Error(
-        `Analysis refused: ${completion.choices[0].message.refusal}`
+        `Analysis refused: ${completion.choices[0].message.refusal}`,
       );
     }
 

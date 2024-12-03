@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   const isProduction = process.env.NEXT_PUBLIC_ENV === "production";
 
   // Salli vain Basic Auth production ympäristössä webscrapers-reitille
-  if (request.nextUrl.pathname.startsWith('/api/webscrapers') && isProduction) {
+  if (request.nextUrl.pathname.startsWith("/api/webscrapers") && isProduction) {
     return new NextResponse(
       JSON.stringify({
         success: false,
@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   }
 
@@ -31,22 +31,22 @@ export function middleware(request: NextRequest) {
     const host = request.headers.get("host");
 
     // Salli Kubernetes CronJobin kutsut (ei origin headeria)
-    if (!origin && request.nextUrl.pathname.startsWith('/api/cron')) {
+    if (!origin && request.nextUrl.pathname.startsWith("/api/cron")) {
       return NextResponse.next();
     }
 
     if (origin && host && new URL(origin).host !== host) {
       return new NextResponse(
-        JSON.stringify({ 
-          success: false, 
-          message: "Invalid origin" 
-        }), 
+        JSON.stringify({
+          success: false,
+          message: "Invalid origin",
+        }),
         {
           status: 403,
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
     }
   }
@@ -56,7 +56,7 @@ export function middleware(request: NextRequest) {
 
 function checkBasicAuth(request: NextRequest) {
   // Tarkista onko reitti suojattu
-  const isProtectedRoute = request.nextUrl.pathname.startsWith('/api/cron');
+  const isProtectedRoute = request.nextUrl.pathname.startsWith("/api/cron");
 
   if (!isProtectedRoute) return null;
 
@@ -64,22 +64,24 @@ function checkBasicAuth(request: NextRequest) {
 
   if (!authHeader || !authHeader.startsWith("Basic ")) {
     return new NextResponse(
-      JSON.stringify({ 
-        success: false, 
-        message: "Unauthorized" 
-      }), 
+      JSON.stringify({
+        success: false,
+        message: "Unauthorized",
+      }),
       {
         status: 401,
         headers: {
           "WWW-Authenticate": 'Basic realm="Secure Area"',
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   }
 
   const base64Credentials = authHeader.split(" ")[1];
-  const credentials = Buffer.from(base64Credentials, "base64").toString("utf-8");
+  const credentials = Buffer.from(base64Credentials, "base64").toString(
+    "utf-8",
+  );
   const [username, password] = credentials.split(":");
 
   if (
@@ -87,16 +89,16 @@ function checkBasicAuth(request: NextRequest) {
     password !== process.env.SCRAPER_PASSWORD
   ) {
     return new NextResponse(
-      JSON.stringify({ 
-        success: false, 
-        message: "Unauthorized" 
-      }), 
+      JSON.stringify({
+        success: false,
+        message: "Unauthorized",
+      }),
       {
         status: 401,
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   }
 
@@ -104,16 +106,13 @@ function checkBasicAuth(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/api/webscrapers/:path*',
-    '/api/cron/:path*'
-  ],
+  matcher: ["/api/webscrapers/:path*", "/api/cron/:path*"],
 };
 
 // if (request.method === "POST") {
 //   // Skip CSRF check for cron jobs
 //   const isCronJob = request.headers.get('x-vercel-cron') === process.env.CRON_SECRET;
-  
+
 //   if (!isCronJob) {
 //     // Regular CSRF check for non-cron requests
 //     const origin = request.headers.get("origin");

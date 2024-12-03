@@ -13,7 +13,7 @@ class ScraperService {
   async runScraperJob(company: string, isTestData: boolean = false) {
     const startTime = Date.now();
     console.log(
-      `[Scraper] Starting scraper for ${company} at ${new Date().toISOString()}`
+      `[Scraper] Starting scraper for ${company} at ${new Date().toISOString()}`,
     );
 
     try {
@@ -46,7 +46,7 @@ class ScraperService {
 
   async runAllScrapers() {
     if (this.isRunning) {
-      console.log('Scraping is already in progress');
+      console.log("Scraping is already in progress");
       return null;
     }
 
