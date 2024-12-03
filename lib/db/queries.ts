@@ -38,15 +38,10 @@ export async function upsertProduct(preparedProduct: PreparedProduct) {
   });
 
   if (!existing) {
-    console.log(
-      `Inserting new product: ${preparedProduct.name} from ${preparedProduct.company}`,
-    );
+
     return await db.insert(products).values(preparedProduct);
   }
 
-  console.log(
-    `Updating existing product: ${preparedProduct.name} from ${preparedProduct.company}`,
-  );
   return await db
     .update(products)
     .set(preparedProduct)

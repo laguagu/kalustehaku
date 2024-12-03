@@ -45,7 +45,6 @@ async function processProduct(
     let productWithMetadata: ProductWithMetadata;
 
     if (!existingProduct) {
-      console.log(`Analyzing new product: ${product.name}`);
       const metadata = await generateFurnitureMetadata(product);
       await delay(RATE_LIMIT_DELAY);
 
@@ -68,7 +67,6 @@ async function processProduct(
         isTestData: config.isTestData,
       };
     } else {
-      console.log(`Using existing metadata for product: ${product.name}`);
       productWithMetadata = {
         ...product,
         metadata: existingProduct.metadata,

@@ -1,9 +1,9 @@
 import { db } from "@/lib/db/drizzle";
 import { products } from "@/lib/db/schema";
 import {
-    PipelineResults,
-    ProcessedProduct,
-    ScrapedProduct,
+  PipelineResults,
+  ProcessedProduct,
+  ScrapedProduct,
 } from "@/lib/types/products/types";
 import { and, eq, notInArray } from "drizzle-orm";
 
@@ -23,8 +23,18 @@ function getUrlCategory(url: string, company: string): string {
       const match = url.match(/\/fin\/([^/?]+)/);
       return match ? match[1] : "";
     } else if (company === "Tavara-Trading") {
-      const parts = new URL(url).pathname.split("/");
-      return parts[3] || "";
+      // Uusi logiikka Tavara-Trading URL:eille
+      const urlObject = new URL(url);
+      const pathParts = urlObject.pathname.split("/");
+      // Etsitään "kaytetyt-" alkuinen osa ja poistetaan "kaytetyt-" etuliite
+      const categoryPart = pathParts.find((part) =>
+        part.startsWith("kaytetyt-")
+      );
+      if (categoryPart) {
+        return categoryPart.replace("kaytetyt-", "");
+      }
+      // Jos ei löydy "kaytetyt-" alkuista osaa, käytetään toiseksi viimeistä osaa
+      return pathParts[pathParts.length - 2] || "";
     }
     return url;
   } catch (e) {
@@ -34,8 +44,17 @@ function getUrlCategory(url: string, company: string): string {
 }
 
 function normalizeCategory(category: string): string {
-  // Poista numerot ja muut ylimääräiset merkit kategorian lopusta
-  return category.split("-")[0].toLowerCase().trim();
+  // Poistetaan "kaytetyt-" etuliite jos se on
+  const withoutPrefix = category.replace(/^kaytetyt-/, "");
+
+  // Poistetaan numerot ja muut ylimääräiset merkit kategorian lopusta
+  // ja muutetaan kaikki väliviivat yhdeksi väliviivaksi
+  return withoutPrefix
+    .toLowerCase()
+    .trim()
+    .replace(/-+/g, "-") // Korvataan useat väliviivat yhdellä
+    .replace(/-ja-/g, "-") // Korvataan "-ja-" väliviivalla
+    .split("-")[0]; // Otetaan vain ensimmäinen osa
 }
 
 export async function syncProducts(
@@ -58,7 +77,9 @@ export async function syncProducts(
   try {
     // Hae odotetut kategoriat URL:eista
     const urlCategories = new Set(
-      options.urls.map((url) => getUrlCategory(url, options.company))
+      options.urls
+        .map((url) => getUrlCategory(url, options.company))
+        .map((category) => normalizeCategory(category))
     );
 
     // Hae scrapatut kategoriat tuotteista
@@ -68,11 +89,7 @@ export async function syncProducts(
 
     console.log(`Expected URLs: ${options.urls.length}`);
     console.log(`Found products from URLs: ${scrapedProducts.length}`);
-    console.log(
-      `Expected categories: ${Array.from(urlCategories)
-        .map((cat) => normalizeCategory(cat))
-        .join(", ")}`
-    );
+    console.log(`Expected categories: ${Array.from(urlCategories).join(", ")}`);
     console.log(
       `Found categories: ${Array.from(scrapedCategories).join(", ")}`
     );
@@ -80,12 +97,7 @@ export async function syncProducts(
 
     // Tarkista puuttuvat kategoriat
     const missingCategories = Array.from(urlCategories).filter(
-      (urlCategory) => {
-        const normalizedUrlCategory = normalizeCategory(urlCategory);
-        return !Array.from(scrapedCategories).some(
-          (scrapedCat) => scrapedCat === normalizedUrlCategory
-        );
-      }
+      (urlCategory) => !scrapedCategories.has(urlCategory)
     );
 
     // Jos kategorioita puuttuu, älä poista tuotteita
