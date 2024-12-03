@@ -12,7 +12,6 @@ Voit syöttää kaikki yksittäiset sivut PRODUCT_URL listalle ne käsitelleen k
 const PRODUCT_URLS = [
   "https://offistore.fi/verkkokauppa/fin/poydat-73",
   "https://offistore.fi/verkkokauppa/fin/tuolit-78",
-  // "https://offistore.fi/verkkokauppa/fin/tuolit-78?p=4", // Lisää paginointi numerot manuaalisesti jos ylempi failaa
   "https://offistore.fi/verkkokauppa/fin/sailytyskalusteet-84",
   "https://offistore.fi/verkkokauppa/fin/aulakalusteet-93",
   "https://offistore.fi/verkkokauppa/fin/valaisimet-113",

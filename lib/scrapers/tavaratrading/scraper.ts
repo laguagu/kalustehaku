@@ -2,7 +2,7 @@
 import { ScrapedProduct, ScraperConfig } from "@/lib/types/products/types";
 import fs from "fs";
 import path from "path";
-import puppeteer, { ElementHandle } from "puppeteer";
+import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
 
 // Helper function to convert thumbnail URL to big image URL
 function convertToBigImageUrl(url: string): string {
@@ -84,95 +84,193 @@ function safeParsePrice(priceText: string | null): number | null {
     return null;
   }
 }
-// Scrapes only used products from the given URL
+
 export async function scrapeProducts(
   url: string,
   config: ScraperConfig,
 ): Promise<ScrapedProduct[]> {
-  try {
-    console.log("Launching browser...");
-    const browser = await puppeteer.launch({
-      headless: true,
-    });
+  let browser: Browser | null = null;
+  let page: Page | null = null;
+  const products: ScrapedProduct[] = [];
 
-    const page = await browser.newPage();
-    console.log(`Navigating to ${url}...`);
-    await page.goto(url, { waitUntil: "networkidle0" });
-
-    await page.waitForSelector("#items_per_page");
-
-    console.log('Selecting "Show All" option...');
-    await page.select("#items_per_page", "all");
-    await page.waitForNavigation({ waitUntil: "networkidle0" });
-
-    const products: ScrapedProduct[] = [];
-
-    console.log("Scraping products...");
-    const productElements = await page.$$(".product_list_wrapper .listatuote");
-    console.log(`Found ${productElements.length} products on page`);
-
-    for (const element of productElements) {
+  // RetryOperation määritys scrapeProducts funktion sisällä
+  async function retryOperation<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 3,
+    retryDelay: number = 3000
+  ): Promise<T> {
+    for (let i = 0; i < maxRetries; i++) {
       try {
-        const isUsed = (await element.$(".kunto.used")) !== null;
-        const name = await safeGetText(element, ".nimi a");
-
-        if (!isUsed || !name) {
-          continue;
-        }
-
-        // Haetaan tuotteen URL
-        const productUrl = await safeGetProductUrl(element);
-
-        // Hae kuvan URL ja muunna se isoksi kuvaksi
-        const imageUrl = await element
-          .$eval(".kuva img", (img) => {
-            const dataSrc = img.getAttribute("data-src");
-            if (dataSrc) {
-              return `https://www.tavaratrading.com${dataSrc}`;
-            }
-            const src = img.getAttribute("src");
-            return src
-              ? src.startsWith("http")
-                ? src
-                : `https://www.tavaratrading.com${src}`
-              : "";
-          })
-          .catch(() => "");
-
-        const bigImageUrl = convertToBigImageUrl(imageUrl);
-
-        const product: ScrapedProduct = {
-          id:
-            (await safeGetAttribute(element, ".kuva a", "name"))?.replace(
-              "product_",
-              "",
-            ) || "",
-          name,
-          description: await safeGetText(element, ".subtitle"),
-          price: safeParsePrice(await safeGetText(element, ".price_out")),
-          condition: (await safeGetText(element, ".kunto")) || "",
-          imageUrl: bigImageUrl,
-          category: url.split("/").pop() || "",
-          availability: (await safeGetText(element, ".availability p")) || "",
-          productUrl: productUrl || "",
-          company: config.company, // Lisätään yritystieto
-        };
-
-        if (product.id && product.name) {
-          products.push(product);
-        } else {
-          console.log("Skipping product due to missing required fields");
-        }
+        return await operation();
       } catch (error) {
-        console.error("Error processing product:", error);
+        console.error(`Operation failed (Attempt ${i + 1}/${maxRetries}):`, error);
+
+        const needsReinit = error instanceof Error && (
+          error.message.includes('Target closed') || 
+          error.message.includes('Protocol error') ||
+          error.message.includes('detached Frame') ||
+          error.message.includes('Session closed')
+        );
+
+        if (needsReinit) {
+          console.log('Browser session closed or detached, reinitializing...');
+          
+          if (page) await page.close().catch(() => {});
+          if (browser) await browser.close().catch(() => {});
+          
+          // Reinitialize browser
+          browser = await puppeteer.launch({
+            headless: true,
+            args: [
+              "--no-sandbox",
+              "--disable-setuid-sandbox",
+              "--disable-dev-shm-usage",
+              "--disable-gpu",
+              "--disable-web-security",
+              "--disable-features=IsolateOrigins,site-per-process",
+            ],
+          });
+          
+          page = await browser.newPage();
+
+          // Re-navigate to the original URL and set up page
+          await page.goto(url, { waitUntil: "networkidle0", timeout: 60000 });
+          await page.waitForSelector("#items_per_page", { timeout: 30000 });
+          
+          // Re-select "Show All" option
+          await page.select("#items_per_page", "all");
+          await page.waitForNavigation({ 
+            waitUntil: "networkidle0",
+            timeout: 60000 
+          });
+          
+          // Give extra time for the page to stabilize
+          await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+
+        if (i < maxRetries - 1) {
+          const waitTime = retryDelay * Math.pow(2, i);
+          console.log(`Retrying in ${waitTime/1000} seconds...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        } else {
+          throw error;
+        }
       }
     }
+    throw new Error('Operation failed after all retries');
+  }
 
-    await browser.close();
+  try {
+    console.log("Launching browser...");
+    browser = await retryOperation(async () => {
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--disable-web-security",
+          "--disable-features=IsolateOrigins,site-per-process",
+        ],
+      });
+      return browser;
+    });
+
+    page = await browser.newPage();
+    console.log(`Navigating to ${url}...`);
+
+    // Initial setup
+    await retryOperation(async () => {
+      await page!.goto(url, { waitUntil: "networkidle0", timeout: 60000 });
+      await page!.waitForSelector("#items_per_page", { timeout: 30000 });
+      await page!.select("#items_per_page", "all");
+      await page!.waitForNavigation({ 
+        waitUntil: "networkidle0",
+        timeout: 60000 
+      });
+      // Give extra time for the page to stabilize
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    });
+
+    // Wrap product scraping in retry
+    await retryOperation(async () => {
+      console.log("Scraping products...");
+      const productElements = await page!.$$(".product_list_wrapper .listatuote");
+      console.log(`Found ${productElements.length} products on page`);
+
+      if (productElements.length === 0) {
+        throw new Error("No products found on page");
+      }
+
+      for (const element of productElements) {
+        try {
+          const isUsed = (await element.$(".kunto.used")) !== null;
+          const name = await safeGetText(element, ".nimi a");
+
+          if (!isUsed || !name) {
+            continue;
+          }
+
+          // Wrap individual product scraping in retry
+          const product = await retryOperation(async () => {
+            const productUrl = await safeGetProductUrl(element);
+            const imageUrl = await element.$eval(".kuva img", (img) => {
+              const dataSrc = img.getAttribute("data-src");
+              if (dataSrc) {
+                return `https://www.tavaratrading.com${dataSrc}`;
+              }
+              const src = img.getAttribute("src");
+              return src
+                ? src.startsWith("http")
+                  ? src
+                  : `https://www.tavaratrading.com${src}`
+                : "";
+            }).catch(() => "");
+
+            const bigImageUrl = convertToBigImageUrl(imageUrl);
+
+            return {
+              id: (await safeGetAttribute(element, ".kuva a", "name"))?.replace(
+                "product_",
+                "",
+              ) || "",
+              name,
+              description: await safeGetText(element, ".subtitle"),
+              price: safeParsePrice(await safeGetText(element, ".price_out")),
+              condition: (await safeGetText(element, ".kunto")) || "",
+              imageUrl: bigImageUrl,
+              category: url.split("/").pop() || "",
+              availability: (await safeGetText(element, ".availability p")) || "",
+              productUrl: productUrl || "",
+              company: config.company,
+            } as ScrapedProduct;
+          });
+
+          if (product.id && product.name) {
+            console.log(`Scraped product: ${product.name}`);
+            products.push(product);
+          }
+        } catch (error) {
+          console.error("Error processing product:", error);
+        }
+      }
+    });
+
+    console.log(`Successfully scraped ${products.length} products`);
     return products;
   } catch (error) {
     console.error("Error scraping products:", error);
-    return [];
+    return products;
+  } finally {
+    if (browser) {
+      try {
+        await browser.close().catch(() => {});
+        console.log("Browser closed successfully");
+      } catch (error) {
+        console.error("Error closing browser:", error);
+      }
+    }
   }
 }
 

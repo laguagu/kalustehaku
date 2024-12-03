@@ -13,6 +13,7 @@ import {
 } from "@/lib/types/products/types";
 import pLimit from "p-limit";
 import { generateFurnitureMetadata } from "../ai/product-analyzer";
+import { syncProducts } from "./sync-products";
 
 const MAX_CONCURRENT_URLS = 2;
 const MAX_CONCURRENT_PRODUCTS = 13;
@@ -35,6 +36,7 @@ async function processProduct(
 ): Promise<void> {
   try {
     results.scraping.totalProcessed++;
+
     const existingProduct = await getProductByIdAndCompany(
       product.id,
       config.company,
@@ -110,7 +112,7 @@ async function processUrl(
     url: string,
     config: ScraperConfig,
   ) => Promise<ScrapedProduct[]>,
-): Promise<void> {
+): Promise<ScrapedProduct[]> {
   try {
     console.log(`\nProcessing URL: ${url}`);
     const scrapedProducts = await scrapeProductsFn(url, {
@@ -128,11 +130,15 @@ async function processUrl(
         productLimit(() => processProduct(product, results, config)),
       ),
     );
+
+    return productsToProcess;
   } catch (error) {
     console.error(`Error processing URL ${url}:`, error);
     results.scraping.errors.push(`Error processing URL ${url}: ${error}`);
+    return [];
   }
 }
+
 
 export async function processProducts(
   scrapeProductsFn: (
@@ -169,14 +175,40 @@ export async function processProducts(
     );
     console.log(`Company: ${company}`);
 
+    // Kerää kaikki scrapatut tuotteet yhteen listaan
+    let allScrapedProducts: ScrapedProduct[] = [];
+
     const urlLimit = pLimit(MAX_CONCURRENT_URLS);
-    await Promise.all(
+    const urlResults = await Promise.all(
       urls.map((url) =>
         urlLimit(() =>
           processUrl(url, productsPerUrl, results, config, scrapeProductsFn),
         ),
       ),
     );
+
+    // Yhdistä kaikki onnistuneesti scrapatut tuotteet
+    allScrapedProducts = urlResults.flat();
+    console.log('\nScraped products length:', allScrapedProducts.length);
+
+    // Jos scraping onnistui ilman virheitä, synkronoidaan tuotteet
+    if (results.scraping.errors.length === 0) {
+      console.log("\nStarting product synchronization...");
+      const syncResults = await syncProducts(allScrapedProducts, {
+        company,
+        urls,
+        isTestData,
+      });
+
+      // Lisää sync tulokset kokonaistuloksiin
+      results.scraping.errors.push(...syncResults.scraping.errors);
+      if (syncResults.removedProducts?.length > 0) {
+        console.log(`Removed ${syncResults.removedProducts.length} outdated products`);
+        results.products.push(...syncResults.removedProducts);
+      }
+    } else {
+      console.log("\nSkipping product synchronization due to scraping errors");
+    }
 
     console.log("\nProcessing Summary:");
     console.log(`Total Processed: ${results.scraping.totalProcessed}`);

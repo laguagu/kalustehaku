@@ -50,7 +50,7 @@ export interface ProcessedProduct {
   name: string;
   status: "success" | "error" | "skipped";
   error?: string;
-  action?: "created" | "updated";
+  action?: "created" | "updated" | "deleted";
   message?: string;
 }
 
