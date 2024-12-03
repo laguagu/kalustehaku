@@ -1,0 +1,39 @@
+flowchart
+    Scrape
+    product
+    Exist
+    new
+	Scrape["scrape"] --- product
+	
+	product
+	new
+    Generate-metada
+	new --- Generate-metada
+    product["scraped-products"]
+    Exist
+    Insert-db
+	Generate-metada --- Insert-db
+	Exist
+	Exist
+    update-db
+	Generate-metada
+	Generate-metada["generate-metada"]
+	Exist --- update-db
+	product --- n1["Compare-products"]
+	n1 --- new
+	n1 --- Exist
+	n1
+	product
+	n1["compare-products"]
+	update-db
+	n2
+	Insert-db
+	n2["compare-scraped-to-db-products"]
+	n2 --- n3["delete-sold-products"]
+	n2
+	n4["scrapping-success-without-errors"]
+	Insert-db --- n4
+	update-db --- n4
+	n4 --- n2
+	n4
+	
