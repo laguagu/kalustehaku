@@ -3,8 +3,9 @@ import { ProductCard } from "@/components/product-card";
 import SearchForm from "@/components/search-form";
 import { LoadingCards } from "@/components/skeletons/loading-cards";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import BoxReveal from "@/components/ui/box-reveal";
 import { useSearchWithFilters } from "@/lib/hooks/useSearchWithFilters";
+import { motion } from "framer-motion";
 import { Suspense } from "react";
 
 export interface SearchResult {
@@ -29,7 +30,6 @@ export interface SearchResult {
   };
   similarity: number;
 }
-
 export default function TavaraTradingSearch() {
   const {
     searchStates,
@@ -46,28 +46,37 @@ export default function TavaraTradingSearch() {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/40">
-      <div className="w-full max-w-6xl mx-auto p-4 space-y-6">
-        <div className="text-center py-8">
-          <h1 className="md:text-4xl text-3xl font-bold text-foreground">
-            Huonekaluhaku
-          </h1>
+    <div className="min-h-screen bg-white bg-dot-black/[0.1] relative pb-12">
+      <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_70%,black)]"></div>
+
+      <motion.div
+        className="w-full max-w-7xl mx-auto p-4 space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex justify-center items-center text-center py-8">
+          <BoxReveal boxColor="hsl(var(--primary))" duration={0.5}>
+            <p className="text-[3.5rem] font-semibold py-4">
+              Huonekaluhaku<span className="text-primary">.</span>
+            </p>
+          </BoxReveal>
         </div>
 
-        {/* Search Form */}
-        <Suspense>
-          <SearchForm
-            searchStates={searchStates}
-            handleQueryChange={handleQueryChange}
-            handleSearch={handleSearch}
-            isLoading={isLoading}
-            error={error}
-          />
-        </Suspense>
+        <div>
+          <Suspense>
+            <SearchForm
+              searchStates={searchStates}
+              handleQueryChange={handleQueryChange}
+              handleSearch={handleSearch}
+              isLoading={isLoading}
+              error={error}
+            />
+          </Suspense>
+        </div>
 
-        {/* Results section */}
         {!isLoading && results.length > 0 && (
-          <div className="bg-card rounded-xl shadow-sm p-6 space-y-6">
+          <div className="bg-zinc-50 rounded-2xl md:border-2 shadow-lg md:py-6 md:px-12 px-2 py-2 space-y-6">
             <div className="hidden md:flex justify-between items-center mb-6">
               <div className="space-y-2">
                 <h2 className="text-2xl font-semibold text-gray-900">
@@ -77,17 +86,6 @@ export default function TavaraTradingSearch() {
                   Hakusanasi parhaiten vastaavat tuotteet ({results.length}{" "}
                   {results.length === 1 ? "tulos" : "tulosta"})
                 </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-background">
-                  90-100% = Erinomainen vastaavuus
-                </Badge>
-                <Badge variant="outline" className="bg-background">
-                  70-89% = Hyvä vastaavuus
-                </Badge>
-                <Badge variant="outline" className="bg-background">
-                  42-69% = Kohtalainen vastaavuus
-                </Badge>
               </div>
             </div>
 
@@ -114,7 +112,6 @@ export default function TavaraTradingSearch() {
           </div>
         )}
 
-        {/* No results state */}
         {!isLoading && results.length === 0 && hasSearched && !error && (
           <div className="text-center py-16 bg-card rounded-lg shadow-sm">
             <div className="max-w-md mx-auto space-y-4">
@@ -128,9 +125,8 @@ export default function TavaraTradingSearch() {
           </div>
         )}
 
-        {/* Loading state */}
         {isLoading && hasSearched && <LoadingCards />}
-      </div>
+      </motion.div>
     </div>
   );
 }

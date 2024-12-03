@@ -1,4 +1,6 @@
 // api/tavaratrading/scrape/route.ts
+// Aja manuaalisesti web screippereitä, vanha versio. Uudessa toteutuksessa api/cron/route.ts korvaa tämän tiedoston.
+
 import { processOffiStore } from "@/lib/scrapers/offistore";
 import { processTavaraTrading } from "@/lib/scrapers/tavaratrading";
 import { ScraperOptions } from "@/lib/types/products/types";
@@ -11,39 +13,12 @@ const scrapers = {
 
 const companyNames = ["tavaratrading", "offistore"];
 
-const basicAuth = async (request: Request) => {
-  const authHeader = request.headers.get("authorization");
-
-  if (!authHeader || !authHeader.startsWith("Basic ")) {
-    return new NextResponse("Unauthorized", {
-      status: 401,
-      headers: { "WWW-Authenticate": 'Basic realm="Secure Area"' },
-    });
-  }
-
-  const base64Credentials = authHeader.split(" ")[1];
-  const credentials = Buffer.from(base64Credentials, "base64").toString(
-    "utf-8",
-  );
-  const [username, password] = credentials.split(":");
-
-  if (
-    username !== process.env.SCRAPER_USERNAME ||
-    password !== process.env.SCRAPER_PASSWORD
-  ) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
-
-  return null;
-};
-
 async function runProcessing(options: ScraperOptions) {
   const startTime = Date.now();
-  const processType = options.isCron ? "CRON" : "Manual";
   const dataType = options.isTestData ? "TEST" : "PRODUCTION";
 
   console.log(
-    `[${processType} ${dataType} Processing] Starting at ${new Date().toISOString()}`,
+    `[${dataType} Processing] Starting at ${new Date().toISOString()}`
   );
   console.log(`Company: ${options.company}`);
   console.log(`URLs to process: ${options.urls?.length || "default"}`);
@@ -54,36 +29,32 @@ async function runProcessing(options: ScraperOptions) {
       scrapers[options.company.toLowerCase() as keyof typeof scrapers];
     if (!processFunction) {
       throw new Error(`Invalid scraper specified: ${options.company}`);
-    }
+    } 
 
     const results = await processFunction(options);
 
     const duration = (Date.now() - startTime) / 1000;
-    console.log(`[${processType} Processing] Completed in ${duration}s`);
+    console.log(`Processing Completed in ${duration}s`);
     console.log(`Processed: ${results.scraping.totalProcessed}`);
     console.log(`Successful: ${results.scraping.successful}`);
     console.log(`Failed: ${results.scraping.failed}`);
 
     return results;
   } catch (error) {
-    console.error(`[${processType} Processing] Failed:`, error);
+    console.error(`Processing Failed:`, error);
     throw error;
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const authResponse = await basicAuth(request);
-    if (authResponse) return authResponse;
-
     const body = await request.json().catch(() => ({}));
 
     const {
-      company = companyNames[1], // Set wanted scraper here for example "tavaratrading" is [0] and "offistore" is [1]. Look top of the file scrapers object;
+      company = companyNames[9], // Set wanted scraper here for example "tavaratrading" is [0] and "offistore" is [1]. Look top of the file scrapers object;
       urls,
       productsPerUrl,
       isTestData = false,
-      isCron = false,
     } = body;
 
     const results = await runProcessing({
@@ -91,7 +62,6 @@ export async function POST(request: Request) {
       urls,
       productsPerUrl,
       isTestData,
-      isCron,
     });
 
     return NextResponse.json({
@@ -107,7 +77,7 @@ export async function POST(request: Request) {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

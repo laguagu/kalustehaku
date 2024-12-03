@@ -14,7 +14,7 @@ interface ProductCardProps {
 
 const ColorDot = ({ color }: { color: string }) => (
   <div
-    className="w-4 h-4 rounded-full border border-border/50 shadow-sm"
+    className="w-4 h-4 rounded-full border-2 border-border/50 shadow-sm"
     style={{
       background:
         COLOR_HEX_MAP[color as keyof typeof COLOR_HEX_MAP] || "#808080",
@@ -22,18 +22,17 @@ const ColorDot = ({ color }: { color: string }) => (
     aria-label={color}
   />
 );
-
 export function ProductCard({ result, isBestMatch }: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
 
   return (
     <Card
       className={cn(
-        "overflow-hidden transition-all duration-200 group",
-        "bg-card md:hover:bg-secondary/20",
+        "overflow-hidden transition-all duration-200 group p-1",
+        "bg-background/80 backdrop-blur-sm hover:bg-background ",
         isBestMatch
           ? "ring-2 ring-primary shadow-md"
-          : "border-border/50 md:hover:border-primary/50 shadow-sm md:hover:shadow-md"
+          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md"
       )}
     >
       <Link
@@ -42,7 +41,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         rel="noopener noreferrer"
         className="block h-full no-underline group"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted md:group-hover:bg-muted/70 transition-colors">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-xl transition-colors">
           {isBestMatch && (
             <div className="absolute right-0 top-0 z-20 bg-primary text-primary-foreground px-3 py-1.5 rounded-bl-lg font-medium shadow-sm">
               Paras osuma
@@ -50,35 +49,19 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
           )}
 
           <Image
-            src={imgError ? "/image-not-found.png" : result.image_url}
+            src={imgError ? "/placeholder.svg" : result.image_url}
             alt={result.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain transition-all duration-300 md:group-hover:scale-105 bg-secondary rounded-2xl p-2 "
+            className="object-cover transition-all duration-300 group-hover:scale-105 p-2 rounded-2xl"
             priority={isBestMatch}
             onError={() => setImgError(true)}
           />
-          <div className="absolute left-2 top-2 z-20">
-            <Badge
-              variant={result.similarity > 0.8 ? "default" : "secondary"}
-              className={cn(
-                "shadow-sm font-bold",
-                isBestMatch
-                  ? "bg-primary text-primary-foreground hover:bg-primary"
-                  : result.similarity > 0.7
-                    ? "bg-primary/80 text-primary-foreground"
-                    : "bg-secondary"
-              )}
-            >
-              {(result.similarity * 100).toFixed(0)}% vastaavuus
-            </Badge>
-          </div>
         </div>
 
         <CardContent className="p-4 space-y-4">
-          {/* Otsikko ja hinta */}
-          <div className="space-y-2">
-            <div className="flex items-start justify-between gap-2">
+          <div className="space-y-4">
+            <div className="flex items-start justify-between gap-2 border-b pb-1">
               <h3 className="font-semibold text-lg text-foreground line-clamp-3">
                 {result.name}
               </h3>
@@ -87,23 +70,36 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
               <span className="text-2xl font-bold text-primary order-2 sm:order-1">
                 {result.price ? `${result.price} €` : "Hinta ei saatavilla"}
               </span>
-              <Badge variant="secondary" className="order-1 sm:order-2 w-fit">
-                {result.metadata.mainGategory && (
+              {result.metadata.mainGategory && (
+                <Badge variant="secondary" className="order-1 sm:order-2 w-fit">
                   <span className="capitalize text-base">
                     {result.metadata.mainGategory}
                   </span>
-                )}
-              </Badge>
+                </Badge>
+              )}
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-4 ">
-            {/* Värit */}
-            {result.metadata.colors?.length > 0 && (
-              <div className="space-y-1.5">
-                <p className="text-md font-medium text-muted-foreground">
-                  Värit
+          {result.metadata.visualDescription && (
+            <div className="relative">
+              <div className="space-y-2 p-4 bg-secondary rounded-lg border border-blue-100 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-400" />
+                  <p className="text-sm font-medium text-black">
+                    Tekoälyn kuvaus tuotteesta:
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground tracking-tight line-clamp-4 pl-4">
+                  {result.metadata.visualDescription}
                 </p>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-4">
+            {result.metadata.colors && result.metadata.colors.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-sm font-medium text-black">Värit</p>
                 <div className="flex flex-wrap gap-1">
                   {result.metadata.colors.map((color) => (
                     <ColorDot key={color} color={color} />
@@ -112,25 +108,23 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
               </div>
             )}
 
-            {/* Materiaalit */}
-            {result.metadata.materials?.length > 0 && (
-              <div className="space-y-1.5">
-                <p className="text-md font-medium text-muted-foreground">
-                  Materiaalit
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {result.metadata.materials.map((material, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="capitalize text-xs"
-                    >
-                      {material}
-                    </Badge>
-                  ))}
+            {result.metadata.materials &&
+              result.metadata.materials.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-sm font-medium text-black">Materiaalit</p>
+                  <div className="flex flex-wrap gap-1">
+                    {result.metadata.materials.map((material, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="capitalize text-xs"
+                      >
+                        {material}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
 
           {/* Tuotteen kuvaus */}
@@ -150,9 +144,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
             {/* Tyyli */}
             {(result.metadata.style || result.metadata.designStyle) && (
               <div className="space-y-1.5">
-                <p className="text-md font-medium text-muted-foreground">
-                  Tyyli
-                </p>
+                <p className="text-sm font-medium text-black">Tyyli</p>
                 <div className="flex flex-wrap gap-1">
                   {result.metadata.style && (
                     <Badge variant="secondary" className="capitalize text-xs">
@@ -168,25 +160,25 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
               </div>
             )}
 
-            {/* Sopii tiloihin */}
-            {result.metadata.roomType?.length > 0 && (
-              <div className="space-y-1.5">
-                <p className="text-md font-medium text-muted-foreground">
-                  Sopii tiloihin
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {result.metadata.roomType.map((room, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="capitalize text-xs"
-                    >
-                      {room}
-                    </Badge>
-                  ))}
+            {result.metadata.roomType &&
+              result.metadata.roomType.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-sm font-medium text-black">
+                    Sopii tiloihin
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {result.metadata.roomType.map((room, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="capitalize text-xs"
+                      >
+                        {room}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         </CardContent>
       </Link>
