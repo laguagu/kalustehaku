@@ -93,12 +93,13 @@ ON products
 USING hnsw (embedding vector_cosine_ops);
 
 -- Funktio semanttista hakua varten
-create or replace function match_furniture (
+CREATE OR REPLACE FUNCTION match_furnitures_with_filter (
   query_embedding vector(1536),
   match_threshold float,
-  match_count int
-)
-returns table (
+  match_count int,
+  filter jsonb DEFAULT '{}'::jsonb
+) 
+RETURNS TABLE (
   id text,
   name text,
   price decimal,
@@ -108,7 +109,10 @@ returns table (
   metadata jsonb,
   similarity float
 )
-language plpgsql as $$
+LANGUAGE plpgsql AS $$
+DECLARE
+  color_filter jsonb := filter -> 'colors';
+  metadata_filter jsonb := filter - 'colors';
 BEGIN
   RETURN QUERY
   SELECT
@@ -118,10 +122,29 @@ BEGIN
     products.image_url,
     products.product_url,
     products.condition,
-    products.metadata::jsonb,
+    products.metadata,
     1 - (products.embedding <=> query_embedding) as similarity
   FROM products
   WHERE 1 - (products.embedding <=> query_embedding) > match_threshold
+    AND (
+      filter = '{}'::jsonb
+      OR (
+        -- Tarkista muut metadata-kentät paitsi värit
+            products.metadata @> metadata_filter
+        AND
+        -- Tarkista värit: palauta true jos yksikin väri täsmää
+        (
+          color_filter IS NULL
+          OR EXISTS (
+            SELECT 1
+            FROM jsonb_array_elements_text(color_filter) AS filter_color
+            WHERE filter_color IN (
+              SELECT jsonb_array_elements_text(products.metadata -> 'colors')
+            )
+          )
+        )
+      )
+    )
   ORDER BY similarity DESC
   LIMIT match_count;
 END;
@@ -156,6 +179,7 @@ Sovellus tukee web scraping -toiminnallisuutta API endpointin kautta:
 
 - POST: Manuaalinen scraping valituille URL:eille
 - Basic Auth -autentikointi
+- Toimii vain kehitysympäristössä. Tuotannossa estetty [middleware.ts](./middleware.ts)
 - Jos et anna post pyynnössä parametrejä käytetään vakioasetuksina screippaukseen.
 
 ```javascript
@@ -193,29 +217,35 @@ curl -X POST http://localhost:3000/api/scrape \
 Sovellus käyttää PostgreSQL:ää pgvector-laajennuksella vektorihakuun. Tietokannan schema on määritelty Drizzle ORM:llä:
 
 ```typescript
-export const products = pgTable("products", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  description: text("description"),
-  price: decimal("price", { precision: 10, scale: 2 }),
-  condition: text("condition"),
-  imageUrl: text("image_url"),
-  productUrl: text("product_url"),
-  category: text("category"),
-  availability: text("availability"),
-  metadata: json("metadata").$type<ProductMetadata>().notNull(),
-  embedding: vector("embedding", { dimensions: 1536 }),
-  searchTerms: text("search_terms"),
-  createdAt: timestamp("created_at").default(sql`NOW()`),
-  updatedAt: timestamp("updated_at").default(sql`NOW()`),
-});
+export const products = pgTable(
+  "products",
+  {
+    uniqueId: uuid("unique_id").defaultRandom().primaryKey(),
+    id: text("id").notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    price: decimal("price", { precision: 10, scale: 2 }),
+    condition: text("condition"),
+    imageUrl: text("image_url"),
+    productUrl: text("product_url"),
+    category: text("category"),
+    availability: text("availability"),
+    company: text("company").notNull(),
+    isTestData: boolean("is_test_data").default(false),
+    metadata: jsonb("metadata").$type<ProductMetadata>().notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }),
+    searchTerms: text("search_terms"),
+    createdAt: timestamp("created_at").default(sql`NOW()`),
+    updatedAt: timestamp("updated_at").default(sql`NOW()`),
+  },
+  (table) => [uniqueIndex("unique_product_source").on(table.id, table.company)],
+);
 ```
 
 ### Tärkeimmät kentät:
 
 - `metadata`: JSON-kenttä joka sisältää tuotteen analysoidut tiedot (tyyli, materiaalit, värit, jne.)
 - `embedding`: 1536-dimensioinen vektori semanttista hakua varten
-- `searchTerms`: Hakusanat ja avainsanat
 
 ## Huomioita kehittäjille
 
@@ -237,6 +267,7 @@ export default function TavaraTradingSearch() {
     const searchResults = await searchFurniture(searchQuery, {
       minSimilarity: 0.25,
       maxResults: 6,
+      filters: {}
     });
     // ...
   }
