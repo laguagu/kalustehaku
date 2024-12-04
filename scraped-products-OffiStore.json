@@ -288,18 +288,6 @@
     "company": "OffiStore"
   },
   {
-    "id": "25953",
-    "name": "Think - työtuoli, käsinojin",
-    "description": "keltainen / valkoinen",
-    "price": 79,
-    "condition": "Käytetty",
-    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/25953_500x500_D0324_302.JPEG",
-    "category": "tuolit-78",
-    "availability": "12 kpl",
-    "productUrl": "https://offistore.fi/verkkokauppa/fin/think_tyotuoli_kasinojin-p-25953-78",
-    "company": "OffiStore"
-  },
-  {
     "id": "25857",
     "name": "Cobi - työtuoli, käsinojin",
     "description": "oranssi / valkoinen",
@@ -333,18 +321,6 @@
     "category": "tuolit-78",
     "availability": "11 kpl",
     "productUrl": "https://offistore.fi/verkkokauppa/fin/still_tyotuoli-p-22275-78",
-    "company": "OffiStore"
-  },
-  {
-    "id": "28150",
-    "name": "6000 työtuoli, käsinojin, korkeaselkä",
-    "description": "musta / musta",
-    "price": 233.1,
-    "condition": "Käytetty",
-    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/28150_500x500_PWS824_007_BHB.PNG",
-    "category": "tuolit-78",
-    "availability": "10 kpl",
-    "productUrl": "https://offistore.fi/verkkokauppa/fin/6000_tyotuoli_kasinojin_korkeaselka-p-28150-78",
     "company": "OffiStore"
   },
   {
@@ -576,18 +552,6 @@
     "company": "OffiStore"
   },
   {
-    "id": "24894",
-    "name": "Neuvottelutuoli",
-    "description": "musta / koivu",
-    "price": 89,
-    "condition": "Käytetty",
-    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/24894_500x500_P0224_002.PNG",
-    "category": "tuolit-78",
-    "availability": "6 kpl",
-    "productUrl": "https://offistore.fi/verkkokauppa/fin/neuvottelutuoli-p-24894-78",
-    "company": "OffiStore"
-  },
-  {
     "id": "16596",
     "name": "Neuvottelutuoli",
     "description": "musta / kromi",
@@ -597,6 +561,18 @@
     "category": "tuolit-78",
     "availability": "6 kpl",
     "productUrl": "https://offistore.fi/verkkokauppa/fin/neuvottelutuoli-p-16596-78",
+    "company": "OffiStore"
+  },
+  {
+    "id": "24894",
+    "name": "Neuvottelutuoli",
+    "description": "musta / koivu",
+    "price": 89,
+    "condition": "Käytetty",
+    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/24894_500x500_P0224_002.PNG",
+    "category": "tuolit-78",
+    "availability": "6 kpl",
+    "productUrl": "https://offistore.fi/verkkokauppa/fin/neuvottelutuoli-p-24894-78",
     "company": "OffiStore"
   },
   {
@@ -1428,6 +1404,18 @@
     "company": "OffiStore"
   },
   {
+    "id": "24883",
+    "name": "Mirra 2 - työtuoli +kn",
+    "description": "musta",
+    "price": 449,
+    "condition": "Käytetty",
+    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/24883_500x500_P0224_017.PNG",
+    "category": "tuolit-78",
+    "availability": "1 kpl",
+    "productUrl": "https://offistore.fi/verkkokauppa/fin/mirra_2_tyotuoli_kn-p-24883-78",
+    "company": "OffiStore"
+  },
+  {
     "id": "23256",
     "name": "Pan - yleistuoli",
     "description": "musta / pyökki",
@@ -1569,6 +1557,18 @@
     "category": "tuolit-78",
     "availability": "1 kpl",
     "productUrl": "https://offistore.fi/verkkokauppa/fin/widen_tyotuoli_kn-p-26288-78",
+    "company": "OffiStore"
+  },
+  {
+    "id": "30311",
+    "name": "Aeron - Työtuoli +kn",
+    "description": "musta",
+    "price": 549,
+    "condition": "Käytetty",
+    "imageUrl": "https://offistore.fi/verkkokauppa/img/imagecache/30311_500x500_P1224_001.PNG",
+    "category": "tuolit-78",
+    "availability": "",
+    "productUrl": "https://offistore.fi/verkkokauppa/fin/aeron_tyotuoli_kn-p-30311-78",
     "company": "OffiStore"
   },
   {

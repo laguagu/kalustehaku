@@ -2,7 +2,28 @@
 import { ScrapedProduct, ScraperConfig } from "@/lib/types/products/types";
 import fs from "fs";
 import path from "path";
-import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
+import puppeteer, { Browser, ElementHandle, Page } from "puppeteer-core";
+
+const getBrowserOptions = () => ({
+  executablePath:
+    process.env.PUPPETEER_EXECUTABLE_PATH ||
+    (process.platform === "win32"
+      ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+      : "/usr/bin/chromium-browser"),
+  headless: true,
+  args: [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-gpu",
+    "--disable-web-security",
+    "--disable-features=IsolateOrigins,site-per-process",
+    `--crash-dumps-dir=/tmp/chrome-crashpad-database`,
+  ],
+  env: {
+    CHROME_CRASHPAD_DATABASE_DIR: "/tmp/chrome-crashpad-database",
+  },
+});
 
 // Helper function to convert thumbnail URL to big image URL
 function convertToBigImageUrl(url: string): string {
@@ -122,17 +143,7 @@ export async function scrapeProducts(
           if (browser) await browser.close().catch(() => {});
 
           // Reinitialize browser
-          browser = await puppeteer.launch({
-            headless: true,
-            args: [
-              "--no-sandbox",
-              "--disable-setuid-sandbox",
-              "--disable-dev-shm-usage",
-              "--disable-gpu",
-              "--disable-web-security",
-              "--disable-features=IsolateOrigins,site-per-process",
-            ],
-          });
+          browser = await puppeteer.launch(getBrowserOptions());
 
           page = await browser.newPage();
 
@@ -166,17 +177,7 @@ export async function scrapeProducts(
   try {
     console.log("Launching browser...");
     browser = await retryOperation(async () => {
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-gpu",
-          "--disable-web-security",
-          "--disable-features=IsolateOrigins,site-per-process",
-        ],
-      });
+      const browser = await puppeteer.launch(getBrowserOptions());
       return browser;
     });
 
@@ -257,7 +258,6 @@ export async function scrapeProducts(
           });
 
           if (product.id && product.name) {
-            console.log(`Scraped product: ${product.name}`);
             products.push(product);
           }
         } catch (error) {

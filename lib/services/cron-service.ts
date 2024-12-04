@@ -4,8 +4,8 @@ import { ScraperOptions } from "../types/products/types";
 
 class ScraperService {
   private scrapers = {
-    tavaratrading: processTavaraTrading,
     offistore: processOffiStore,
+    tavaratrading: processTavaraTrading,
   };
 
   private isRunning = false;
