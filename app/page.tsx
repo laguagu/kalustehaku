@@ -112,7 +112,7 @@ export default function TavaraTradingSearch() {
         )}
 
         {!isLoading && results.length === 0 && hasSearched && !error && (
-          <div className="text-center py-16 bg-card rounded-lg shadow-sm">
+          <div className="text-center py-16 bg-card rounded-lg shadow-xl">
             <div className="max-w-md mx-auto space-y-4">
               <p className="text-gray-500 text-lg">
                 Hakusanalla ei löytynyt tuloksia
