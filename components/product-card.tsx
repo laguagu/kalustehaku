@@ -32,7 +32,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         "bg-background/80 backdrop-blur-sm hover:bg-background ",
         isBestMatch
           ? "ring-2 ring-primary shadow-md"
-          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md",
+          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md"
       )}
     >
       <Link
@@ -126,18 +126,6 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
                 </div>
               )}
           </div>
-
-          {/* Tuotteen kuvaus */}
-          {result.metadata.visualDescription && (
-            <div className="space-y-2 py-3 tracking-tight bg-secondary/20 rounded-lg pr-3">
-              <p className="text-md font-medium text-muted-foreground">
-                Tekoälyn kuvaus tuotteesta:
-              </p>
-              <p className="text-sm text-muted-foreground line-clamp-6">
-                {result.metadata.visualDescription}
-              </p>
-            </div>
-          )}
 
           {/* Muut ominaisuudet */}
           <div className="flex flex-col flex-wrap gap-4">
