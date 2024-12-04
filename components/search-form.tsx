@@ -36,7 +36,7 @@ export default function SearchForm({
       <SearchInfo />
       <Card className="border-0 shadow-lg">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xl">Huonekaluhaku</CardTitle>
+          <CardTitle className="text-xl">Etsi käytettyjä huonekaluja</CardTitle>
           <CardDescription>Kuvaile etsimääsi huonekalua</CardDescription>
         </CardHeader>
         <CardContent>
