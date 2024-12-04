@@ -123,6 +123,7 @@ export default function TavaraTradingSearch() {
             </div>
           </div>
         )}
+      {isLoading && hasSearched && <LoadingCards />}
       </motion.div>
     </div>
   );
