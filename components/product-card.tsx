@@ -89,7 +89,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
                     Tekoälyn kuvaus tuotteesta:
                   </p>
                 </div>
-                <p className="text-sm text-muted-foreground tracking-tight line-clamp-4 pl-4">
+                <p className="text-sm text-muted-foreground tracking-tight line-clamp-10 ">
                   {result.metadata.visualDescription}
                 </p>
               </div>
