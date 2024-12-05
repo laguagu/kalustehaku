@@ -74,16 +74,20 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 RUN groupadd --system --gid 1001 nodejs
 RUN useradd --system --uid 1001 nextjs
 
-# Create cache directories and set permissions
-
-RUN mkdir -p .next/cache/images .cache/puppeteer /tmp/chrome-crashpad-database
-RUN chown -R nextjs:nodejs .next/cache/images .cache/puppeteer /tmp/chrome-crashpad-database
+# Luo hakemistot ennen kopiointia
+RUN mkdir -p \
+    /app/.next/cache/images \
+    /app/.cache/puppeteer \
+    /tmp/chrome-crashpad-database
 
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=1001:0 /app/.next/standalone ./
+COPY --from=builder --chown=1001:0 /app/.next/static ./.next/static
 
-RUN chown -R nextjs:nodejs /app
+# Aseta oikeudet koko /app hakemistolle ja chrome-crashpad-databaselle
+RUN chown -R 1001:0 /app && chmod -R g+rwX /app && \
+    chown -R 1001:0 /tmp/chrome-crashpad-database && chmod -R g+rwX /tmp/chrome-crashpad-database
+
 USER nextjs
 
 EXPOSE 3000
