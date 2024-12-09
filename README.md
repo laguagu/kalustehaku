@@ -318,6 +318,36 @@ export async function searchFurniture(
 4. Palautetaan samankaltaisimmat tuotteet cosine similarity -arvon perusteella
 5. Tulokset järjestetään samankaltaisuuden mukaan
 
+### Web Scraping -prosessi
+
+Web scraping -prosessin kulku on kuvattu alla olevassa kaaviossa:
+
+graph TD
+    Start([Aloita web scraping]) --> Scrape[Web scraping prosessi]
+    Scrape --> Products[Screipatut tuotteet]
+    
+    Products --> CheckDB{Löytyykö\ntuote DB:stä?}
+    
+    CheckDB -->|Kyllä, sama ID ja liike| UpdateDB[Päivitä tuotetiedot\ntietokannassa]
+    CheckDB -->|Ei löydy| CreateMeta[Luo metadata\nobjekti]
+    
+    CreateMeta --> InsertDB[Lisää uusi tuote\ntietokantaan]
+    
+    UpdateDB --> CompareProducts[Vertaa scrapattuja tuotteita\ntietokannan tuotteisiin]
+    InsertDB --> CompareProducts
+    
+    CompareProducts --> CheckSold{Onko tuote\npoissa scrapatulta\nlistalta?}
+    
+    CheckSold -->|Kyllä| DeleteProduct[Poista myyty tuote\ntietokannasta]
+    CheckSold -->|Ei| End([Prosessi valmis])
+    DeleteProduct --> End
+    
+    style Start fill:#90EE90
+    style End fill:#FFB6C1
+    style CheckDB fill:#FFE4B5
+    style CheckSold fill:#FFE4B5
+    style Products fill:#87CEEB
+
 ### Web Scraping huomiot
 
 - Test scripteillä (`test:scraper` ja `test:pipeline`) voi testata scraping-toiminnallisuutta paikallisesti
