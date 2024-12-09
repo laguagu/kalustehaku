@@ -328,7 +328,7 @@ flowchart TD
     B --> C[Scraped Products]
     
     C --> D{Check Database}
-    D -->|Same ID & Company| E[Update Database]
+    D -->|Same ID & Company| E[Update Product Info]
     D -->|New Product| F[Generate Metadata]
     
     F --> G[Insert to Database]
