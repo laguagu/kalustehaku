@@ -324,7 +324,7 @@ Web scraping -prosessin kulku on kuvattu alla olevassa kaaviossa:
 
 ```mermaid
 flowchart TD
-    A[Start] --> B[Web Scraping Process]
+    A((Start)) --> B[Web Scraping Process]
     B --> C[Scraped Products]
     
     C --> D{Check Database}
@@ -338,13 +338,13 @@ flowchart TD
     
     H --> I{Is Product\nStill Listed?}
     I -->|No| J[Delete Sold Product]
-    I -->|Yes| K[Finish]
+    I -->|Yes| K((Finish))
     J --> K
     
-    classDef startNode fill:#90EE90
-    classDef endNode fill:#FFB6C1
-    classDef checkNode fill:#FFE4B5
-    classDef processNode fill:#87CEEB
+    classDef startNode fill:#90EE90,stroke:#333,stroke-width:2px
+    classDef endNode fill:#FFB6C1,stroke:#333,stroke-width:2px
+    classDef checkNode fill:#FFE4B5,stroke:#333,stroke-width:2px
+    classDef processNode fill:#87CEEB,stroke:#333,stroke-width:2px
     
     class A startNode
     class K endNode
