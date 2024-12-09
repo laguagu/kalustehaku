@@ -324,7 +324,7 @@ Web scraping -prosessin kulku on kuvattu alla olevassa kaaviossa:
 
 ```mermaid
 flowchart TD
-    A((Start)) --> B[Web Scraping Process<br>Rate Limited]
+    A((Start)) --> B[Web Scraping Process]
     B --> C[Scraped Products]
     
     C --> D{Check Database}
