@@ -336,7 +336,7 @@ flowchart TD
     E --> H[Compare Products]
     G --> H
     
-    H --> I{Is Product\nStill Listed?}
+    H --> I{Is Product<br>Still Listed?}
     I -->|No| J[Delete Sold Product]
     I -->|Yes| K((Finish))
     J --> K
