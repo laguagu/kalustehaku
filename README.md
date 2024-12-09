@@ -322,31 +322,35 @@ export async function searchFurniture(
 
 Web scraping -prosessin kulku on kuvattu alla olevassa kaaviossa:
 
-graph TD
-    Start([Aloita web scraping]) --> Scrape[Web scraping prosessi]
-    Scrape --> Products[Screipatut tuotteet]
+```mermaid
+flowchart TD
+    A[Start] --> B[Web Scraping Process]
+    B --> C[Scraped Products]
     
-    Products --> CheckDB{Löytyykö\ntuote DB:stä?}
+    C --> D{Check Database}
+    D -->|Same ID & Company| E[Update Database]
+    D -->|New Product| F[Generate Metadata]
     
-    CheckDB -->|Kyllä, sama ID ja liike| UpdateDB[Päivitä tuotetiedot\ntietokannassa]
-    CheckDB -->|Ei löydy| CreateMeta[Luo metadata\nobjekti]
+    F --> G[Insert to Database]
     
-    CreateMeta --> InsertDB[Lisää uusi tuote\ntietokantaan]
+    E --> H[Compare Products]
+    G --> H
     
-    UpdateDB --> CompareProducts[Vertaa scrapattuja tuotteita\ntietokannan tuotteisiin]
-    InsertDB --> CompareProducts
+    H --> I{Is Product\nStill Listed?}
+    I -->|No| J[Delete Sold Product]
+    I -->|Yes| K[Finish]
+    J --> K
     
-    CompareProducts --> CheckSold{Onko tuote\npoissa scrapatulta\nlistalta?}
+    classDef startNode fill:#90EE90
+    classDef endNode fill:#FFB6C1
+    classDef checkNode fill:#FFE4B5
+    classDef processNode fill:#87CEEB
     
-    CheckSold -->|Kyllä| DeleteProduct[Poista myyty tuote\ntietokannasta]
-    CheckSold -->|Ei| End([Prosessi valmis])
-    DeleteProduct --> End
-    
-    style Start fill:#90EE90
-    style End fill:#FFB6C1
-    style CheckDB fill:#FFE4B5
-    style CheckSold fill:#FFE4B5
-    style Products fill:#87CEEB
+    class A startNode
+    class K endNode
+    class D,I checkNode
+    class B,C,E,F,G,H,J processNode
+```
 
 ### Web Scraping huomiot
 
