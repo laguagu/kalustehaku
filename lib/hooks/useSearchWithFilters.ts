@@ -1,5 +1,6 @@
-import { generateAIFilters, searchFurniture } from "@/app/actions";
+import { generateAIFilters } from "@/app/(ai)/actions";
 import { useCallback, useEffect } from "react";
+import { searchFurniture } from "../db/supabase/server-queries";
 import {
   FurnitureMainCategoryEnum,
   FurnitureMaterialEnum,
@@ -23,11 +24,8 @@ export function useSearchWithFilters() {
     hasSearched,
     setHasSearched,
     isLoading,
-    setIsLoading,
+    startSearch,
   } = useSearchStates();
-  // useEffect(() => {
-  //   console.log("searchStates", searchStates);
-  // }, [searchStates]);
 
   const buildFilters = useCallback(() => {
     const filters: Partial<ProductMetadata> = {};
@@ -61,8 +59,6 @@ export function useSearchWithFilters() {
   const performSearch = useCallback(
     async (query: string) => {
       if (!query?.trim()) return;
-
-      setIsLoading(true);
       setHasSearched(true);
 
       try {
@@ -90,7 +86,6 @@ export function useSearchWithFilters() {
               ? findColorGroups(aiFilters.colors).join(",")
               : "",
           };
-
           await setSearchStates((prev) => ({
             ...prev,
             ...updates,
@@ -101,33 +96,44 @@ export function useSearchWithFilters() {
 
         const cleanedFilters = cleanFilters(filters);
 
-        const searchResults = await searchFurniture(query, {
-          minSimilarity: 0.42,
-          maxResults: 6,
-          ...(cleanedFilters && { filters: cleanedFilters }),
-        });
-
-        setResults(searchResults);
-        setError(null);
+        try {
+          const searchResults = await searchFurniture(query, {
+            minSimilarity: 0.42,
+            maxResults: 6,
+            ...(cleanedFilters && { filters: cleanedFilters }),
+          });
+          setResults(searchResults);
+          setError(null);
+        } catch (err) {
+          setError("Haussa tapahtui virhe. Yritä uudelleen.");
+          console.error("Search error:", err);
+        }
       } catch (err) {
-        setError("Haussa tapahtui virhe. Yritä uudelleen.");
-        console.error("Search error:", err);
-      } finally {
-        setIsLoading(false);
+        setError("AI-filtterien haussa tapahtui virhe.");
+        console.error("AI filters error:", err);
       }
     },
-    [buildFilters, searchStates.ai, setSearchStates],
+    [
+      buildFilters,
+      searchStates.ai,
+      setError,
+      setHasSearched,
+      setResults,
+      setSearchStates,
+    ]
   );
 
   const handleSearch = useCallback(
     async (formData: FormData) => {
       const query = formData.get("query") as string;
       if (query?.trim()) {
-        await setSearchStates({ ...searchStates, q: query });
-        await performSearch(query);
+        startSearch(async () => {
+          await setSearchStates({ ...searchStates, q: query });
+          await performSearch(query);
+        });
       }
     },
-    [searchStates, setSearchStates, performSearch],
+    [searchStates, setSearchStates, performSearch, startSearch]
   );
 
   useEffect(() => {

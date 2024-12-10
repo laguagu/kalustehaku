@@ -1,6 +1,6 @@
-import { SearchResult } from "@/app/page";
 import { parseAsString, useQueryStates } from "nuqs";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { SearchResult } from "../types/search/types";
 
 export function useSearchStates() {
   const [searchStates, setSearchStates] = useQueryStates({
@@ -14,7 +14,7 @@ export function useSearchStates() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, startSearch] = useTransition();
 
   return {
     searchStates,
@@ -26,6 +26,6 @@ export function useSearchStates() {
     hasSearched,
     setHasSearched,
     isLoading,
-    setIsLoading,
+    startSearch,
   };
 }

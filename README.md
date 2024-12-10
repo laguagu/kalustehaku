@@ -326,27 +326,27 @@ Web scraping -prosessin kulku on kuvattu alla olevassa kaaviossa:
 flowchart TD
     A((Start)) --> B[Web Scraping Process]
     B --> C[Scraped Products]
-    
+
     C --> D{Check Database}
     D -->|Same ID & Company Name| E[Update Product Info]
     D -->|New Product| F[Generate AI Metadata<br>& Embeddings]
-    
+
     F --> G[Insert to Database]
-    
+
     E --> H[Compare Products<br>with DB]
     G --> H
-    
+
     H --> I{Is Product<br>Still Listed?}
     I -->|No| J[Delete Sold Product]
     I -->|Yes| K((Finish))
     J --> K
-    
+
     classDef startNode fill:#90EE90,stroke:#333,stroke-width:2px
     classDef endNode fill:#FFB6C1,stroke:#333,stroke-width:2px
     classDef checkNode fill:#FFE4B5,stroke:#333,stroke-width:2px
     classDef processNode fill:#87CEEB,stroke:#333,stroke-width:2px
     classDef aiNode fill:#DDA0DD,stroke:#333,stroke-width:2px
-    
+
     class A startNode
     class K endNode
     class D,I checkNode

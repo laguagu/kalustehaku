@@ -8,28 +8,6 @@ import { useSearchWithFilters } from "@/lib/hooks/useSearchWithFilters";
 import { motion } from "framer-motion";
 import { Suspense } from "react";
 
-export interface SearchResult {
-  id: string;
-  name: string;
-  price: number | null;
-  image_url: string;
-  product_url: string;
-  condition: string;
-  metadata: {
-    style: string;
-    materials: string[];
-    colors: string[];
-    category: string;
-    mainGategory: string;
-    roomType: string[];
-    functionalFeatures: string[];
-    designStyle: string;
-    condition: string;
-    suitableFor: string[];
-    visualDescription: string;
-  };
-  similarity: number;
-}
 export default function TavaraTradingSearch() {
   const {
     searchStates,
@@ -123,7 +101,7 @@ export default function TavaraTradingSearch() {
             </div>
           </div>
         )}
-      {isLoading && hasSearched && <LoadingCards />}
+        {isLoading && hasSearched && <LoadingCards />}
       </motion.div>
     </div>
   );
