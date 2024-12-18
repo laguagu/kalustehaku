@@ -1,4 +1,5 @@
 create extension if not exists vector;
+DROP FUNCTION IF EXISTS match_furnitures_with_filter(vector,double precision,integer,jsonb);
 
 CREATE OR REPLACE FUNCTION match_furnitures_with_filter (
   query_embedding vector(1536),
@@ -14,7 +15,8 @@ RETURNS TABLE (
   product_url text,
   condition text,
   metadata jsonb,
-  similarity float
+  similarity float,
+  company text
 )
 LANGUAGE plpgsql AS $$
 DECLARE
@@ -30,7 +32,8 @@ BEGIN
     products.product_url,
     products.condition,
     products.metadata,
-    1 - (products.embedding <=> query_embedding) as similarity
+    1 - (products.embedding <=> query_embedding) as similarity,
+    products.company
   FROM products
   WHERE 1 - (products.embedding <=> query_embedding) > match_threshold
     AND (

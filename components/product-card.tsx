@@ -32,7 +32,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         "bg-background/80 backdrop-blur-sm hover:bg-background ",
         isBestMatch
           ? "ring-2 ring-primary shadow-md"
-          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md",
+          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md"
       )}
     >
       <Link
@@ -62,9 +62,14 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         <CardContent className="p-4 space-y-4">
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-2 border-b pb-1">
-              <h3 className="font-semibold text-lg text-foreground line-clamp-3">
-                {result.name}
-              </h3>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-lg text-foreground line-clamp-3">
+                  {result.name}
+                </h3>
+                <p className="text-sm text-muted-foreground pb-1">
+                  {result.company?.replace("-", " ")} 
+                </p>
+              </div>
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
               <span className="text-2xl font-bold text-primary order-2 sm:order-1">

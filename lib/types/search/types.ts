@@ -19,4 +19,5 @@ export interface SearchResult {
     visualDescription: string;
   };
   similarity: number;
+  company: string;
 }
