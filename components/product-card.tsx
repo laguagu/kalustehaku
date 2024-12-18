@@ -33,7 +33,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         isBestMatch
           ? "ring-2 ring-primary shadow-md"
           : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md"
-      )}
+        )}
     >
       <Link
         href={result.product_url}
