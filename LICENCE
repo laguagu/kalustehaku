@@ -1,21 +1,21 @@
-# License
+MIT License
 
-Copyright (c) 2024 Älyä-hanke, Haaga-Helia University of Applied Sciences
-All rights reserved.
-This project has been developed by developers from Haaga-Helia University of Applied Sciences
-as part of the Älyä Project (https://www.alya-hanke.fi/).
-Proprietary and confidential software.
-Any use, copying, modification, merging, publication, distribution, sublicensing,
-and/or selling of this software requires explicit permission from
-Haaga-Helia University of Applied Sciences and the Älyä Project.
-For permission requests, please visit: https://www.alya-hanke.fi/
+Copyright (c) 2025 Älyä-hanke (https://www.alya-hanke.fi) and Haaga-Helia University of Applied Sciences
 
-Tekijänoikeus (c) 2024 Älyä-hanke, Haaga-Helia ammattikorkeakoulu
-Kaikki oikeudet pidätetään.
-Tämän projektin ovat kehittäneet Haaga-Helia ammattikorkeakoulun kehittäjät
-osana Älyä-hanketta (https://www.alya-hanke.fi/).
-Omistusoikeudellinen ja luottamuksellinen ohjelmisto.
-Ohjelmiston käyttö, kopiointi, muokkaaminen, yhdistäminen, julkaiseminen,
-jakelu, alilisensointi ja/tai myynti edellyttävät Haaga-Helia ammattikorkeakoulun
-ja Älyä-hankkeen erillistä lupaa.
-Käyttöoikeuslupapyynnöt: https://www.alya-hanke.fi/
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
