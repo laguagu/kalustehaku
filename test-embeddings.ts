@@ -84,7 +84,7 @@ function generateNaturalDescriptions(metadata: ProductMetadata): string[] {
   return descriptions.map((desc) => desc.toLowerCase());
 }
 
-async function generateEmbeddingWithRetry(metadata: ProductMetadata): Promise<number[]> {
+async function generateEmbedding(metadata: ProductMetadata): Promise<number[]> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
