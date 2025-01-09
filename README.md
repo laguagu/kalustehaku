@@ -250,9 +250,11 @@ export const products = pgTable(
     createdAt: timestamp("created_at").default(sql`NOW()`),
     updatedAt: timestamp("updated_at").default(sql`NOW()`),
   },
-  (table) => [uniqueIndex("unique_product_source").on(table.id, table.company)],
+  (table) => [uniqueIndex("unique_product_source").on(table.id, table.company)]
 );
 ```
+
+**HUOM!** Käytössä on myös test_products. Määrittele db/queries.ts kumpi taulu on käytössä kohdassa tableToUse.
 
 ### Tärkeimmät kentät:
 
@@ -291,7 +293,7 @@ export default function TavaraTradingSearch() {
 ```typescript
 // app/actions.ts
 export async function generateSearchEmbedding(
-  searchText: string,
+  searchText: string
 ): Promise<number[]> {
   const response = await openai.embeddings.create({
     model: "text-embedding-3-small",
@@ -310,7 +312,7 @@ export async function searchFurniture(
   options: {
     minSimilarity?: number;
     maxResults?: number;
-  } = {},
+  } = {}
 ) {
   const embedding = await generateSearchEmbedding(searchQuery);
   const { data } = await supabase.rpc("match_furniture", {
