@@ -212,6 +212,18 @@ curl -X POST http://localhost:3000/api/scrape \
 └── components/        # React komponentit
 ```
 
+## Kubernetes konfiguraatiot
+
+Projektista löytyy Kubernetes-konfiguraatiot `lib/kubernetes/` kansiosta:
+
+```bash
+lib/kubernetes/
+├── cronjobs/
+│   └── scraper-weekly.yaml      # Viikoittainen scraping-ajo (maanantaisin klo 00:00)
+└── jobs/
+    └── scraper-manual.yaml      # Template manuaalista ajoa varten
+```
+
 ## Tietokantarakenne
 
 Sovellus käyttää PostgreSQL:ää pgvector-laajennuksella vektorihakuun. Tietokannan schema on määritelty Drizzle ORM:llä:
@@ -359,6 +371,28 @@ flowchart TD
 - Test scripteillä (`test:scraper` ja `test:pipeline`) voi testata scraping-toiminnallisuutta paikallisesti
 - Käytä testeihin erillistä tietokantaa tuotantotietokannan sijaan
 - Muista asettaa Basic Auth -tunnukset ympäristömuuttujiin
+
+# Kustannusarvio
+
+Sovelluksen käyttökustannukset koostuvat pääasiassa OpenAI API -kutsuista:
+
+## GPT-4o Vision -analyysit (kuvien prosessointi)
+
+- Noin $0.0007 per analysoitu tuotekuva
+- Sisältää tuotteen tyylin, materiaalien ja värien tunnistuksen (metadata objektin) jne.
+
+## Embeddings (semanttinen haku)
+
+- text-embedding-3-small: $0.02 per 1M tokenia
+- Hakukustannukset ovat minimaaliset, tyypillisesti alle $0.0001 per haku
+
+## Kokonaiskustannusarvio
+
+- 100 tuotteen prosessointi: ~$0.07
+- 1000 hakua: ~$0.10
+- Kuukausittainen kustannusarvio normaalikäytöllä: $1-5
+
+_Huom: Kustannukset ovat arvioita ja voivat vaihdella käyttömäärän mukaan._
 
 ## Lisenssi
 
