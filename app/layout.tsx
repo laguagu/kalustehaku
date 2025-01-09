@@ -19,8 +19,7 @@ const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-roboto-condensed",
-  // Jos haluat useampia painoja, määrittele ne näin:
-  weight: ["400", "700"], // tai mitä painoja tarvitsetkin
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {

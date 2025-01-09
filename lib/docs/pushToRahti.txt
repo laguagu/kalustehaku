@@ -1,0 +1,12 @@
+docker build --no-cache -t tavaratrading-embeding .
+docker run -p 3000:3000 tavaratrading-embeding
+docker run --env-file .env.local -p 3000:3000 tavaratrading-embeding  // env tiedoston kanssa.
+
+Rahti 2 - Rahti Image registry
+docker tag tavaratrading-embeding image-registry.apps.2.rahti.csc.fi/alyakokeilut/tavaratrading-embeddings:latest
+docker login -u g -p $(oc whoami -t) image-registry.apps.2.rahti.csc.fi
+docker push image-registry.apps.2.rahti.csc.fi/alyakokeilut/tavaratrading-embeddings:latest
+
+-Tarkista imagestream
+oc get imagestream
+    

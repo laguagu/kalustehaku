@@ -9,7 +9,7 @@ export const dbConfig = {
   getTable() {
     return this.useTestDb ? test_products : products;
   },
-  // Lisätään funktio Supabase RPC funktion nimen hakemiseen
+  // funktio Supabase RPC funktion nimen hakemiseen
   getMatchFunction() {
     return this.useTestDb
       ? "test_match_furnitures_with_filter"

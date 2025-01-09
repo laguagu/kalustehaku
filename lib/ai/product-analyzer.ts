@@ -1,4 +1,3 @@
-// lib/ai/product-analyzer.ts
 import axios from "axios";
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";

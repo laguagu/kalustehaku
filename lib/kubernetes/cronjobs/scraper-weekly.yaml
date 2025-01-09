@@ -23,7 +23,7 @@ spec:
                   --retry-delay 5 \
                   -H "Authorization: Basic $(echo -n ${SCRAPER_USERNAME}:${SCRAPER_PASSWORD} | base64)" \
                   http://172.30.41.141:3000/api/cron
-            env:
+              env:
                 - name: SCRAPER_USERNAME
                   valueFrom:
                     secretKeyRef:

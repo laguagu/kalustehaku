@@ -1,4 +1,3 @@
-// lib/ai/embeddings.ts
 import OpenAI from "openai";
 import { ProductMetadata } from "../types/metadata/metadata";
 

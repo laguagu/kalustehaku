@@ -20,7 +20,7 @@ const getBrowserOptions = () => ({
     `--crash-dumps-dir=/tmp/chrome-crashpad-database`, // Vaihtoehtoisesti käytä dir=/dev/null jolloin ne menevät mustaan aukkoon
   ],
   env: {
-    CHROME_CRASHPAD_DATABASE_DIR: "/tmp/chrome-crashpad-database", // Ja tämä
+    CHROME_CRASHPAD_DATABASE_DIR: "/tmp/chrome-crashpad-database",
   },
 });
 

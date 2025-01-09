@@ -218,7 +218,6 @@ export async function scrapeProducts(
             continue;
           }
 
-          // Wrap individual product scraping in retry
           const product = await retryOperation(async () => {
             const productUrl = await safeGetProductUrl(element);
             const imageUrl = await element
@@ -310,7 +309,6 @@ export async function main() {
   }
 }
 
-// Suoritetaan main funktio vain jos tiedosto ajetaan suoraan
 if (require.main === module) {
   main();
 }

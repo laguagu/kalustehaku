@@ -4,7 +4,6 @@ import { ProductMetadata } from "../types/metadata/metadata";
 export const cleanFilters = (filters: Partial<ProductMetadata> | undefined) => {
   if (!filters) return {};
 
-  // Puhdistettu objekti
   const cleaned: Partial<ProductMetadata> = {};
 
   if (filters.mainGategory?.trim()) {
