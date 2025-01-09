@@ -2,28 +2,85 @@
 import OpenAI from "openai";
 import { ProductMetadata } from "../types/metadata/metadata";
 
+function generateNaturalDescriptions(metadata: ProductMetadata): string[] {
+  const descriptions = [];
+
+  // Yhdistetty huonekalu ja värikuvaus
+  if (metadata.colors.length > 0) {
+    const colorDesc =
+      metadata.colors.length === 1
+        ? `Huonekalu on ${metadata.colors[0].toLowerCase()} värinen ${metadata.category.toLowerCase().slice(0, -1)}` // Poistetaan monikko ("t") lopusta
+        : `Huonekalun värit ovat ${metadata.colors.join(" ja ").toLowerCase()}`;
+    descriptions.push(colorDesc);
+  }
+
+  descriptions.push(`Tuotetyyppi: ${metadata.category.toLowerCase()}`);
+  descriptions.push(`Pääkategoria: ${metadata.mainGategory.toLowerCase()}`);
+
+  // Värit vielä erikseen hakuja varten
+  if (metadata.colors.length > 0) {
+    descriptions.push(`Värit: ${metadata.colors.join(" ").toLowerCase()}`);
+  }
+
+  if (metadata.materials.length > 0) {
+    const materialDesc =
+      metadata.materials.length === 1
+        ? `Se on valmistettu materiaalista ${metadata.materials[0].toLowerCase()}`
+        : `Sen materiaaleja ovat ${metadata.materials.join(" ja ").toLowerCase()}`;
+    descriptions.push(materialDesc);
+  }
+
+  // Tyylin kuvaus
+  if (metadata.style && metadata.designStyle) {
+    descriptions.push(
+      `Tyyliltään huonekalu edustaa ${metadata.style.toLowerCase()} suuntausta ja ${metadata.designStyle.toLowerCase()}.`
+    );
+  }
+
+  // Käyttötarkoitus ja sijoitus
+  if (metadata.suitableFor.length > 0) {
+    descriptions.push(
+      `Soveltuu käytettäväksi: ${metadata.suitableFor.join(", ").toLowerCase()}.`
+    );
+  }
+
+  if (metadata.roomType.length > 0) {
+    descriptions.push(
+      `Suunniteltu käytettäväksi tiloissa: ${metadata.roomType.join(", ").toLowerCase()}.`
+    );
+  }
+
+  // Toiminnalliset ominaisuudet
+  if (metadata.functionalFeatures.length > 0) {
+    descriptions.push(
+      `Huonekalun ominaisuuksiin kuuluu: ${metadata.functionalFeatures.join(", ").toLowerCase()}.`
+    );
+  }
+
+  // Brändi jos saatavilla
+  if (metadata.brand) {
+    descriptions.push(`Valmistaja: ${metadata.brand.toLowerCase()}.`);
+  }
+
+  // Kunto
+  descriptions.push(`Huonekalun kunto: ${metadata.condition.toLowerCase()}.`);
+
+  return descriptions;
+}
+
 export async function generateEmbedding(
-  metadata: ProductMetadata,
+  metadata: ProductMetadata
 ): Promise<number[]> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
+
+  const naturalDescriptions = generateNaturalDescriptions(metadata);
+
   const textForEmbedding = `
-[KUVAUS]
-Visuaalinen kuvaus: ${metadata.visualDescription}
+${naturalDescriptions.join("\n")}
 
-[PÄÄOMINAISUUDET]
-Tyyli ja kategoria: ${metadata.style.toLowerCase()} ${metadata.category.toLowerCase()} ${metadata.mainGategory.toLowerCase()}
-Materiaalit: ${metadata.materials.join(" ").toLowerCase()}
-Värit: ${metadata.colors.join(" ").toLowerCase()}
-Brändi: ${metadata.brand.toLowerCase()}
-
-[LISÄTIEDOT]
-Toiminnalliset ominaisuudet: ${metadata.functionalFeatures.join(" ").toLowerCase()}
-Sopivat huoneet: ${metadata.roomType.join(" ").toLowerCase()}
-Käyttötarkoitukset: ${metadata.suitableFor.join(" ").toLowerCase()}
-Kunto: ${metadata.condition.toLowerCase()}
-`.trim();
+${metadata.visualDescription}`.trim();
 
   try {
     const response = await openai.embeddings.create({

@@ -36,7 +36,7 @@ export default function TavaraTradingSearch() {
         <div className="flex justify-center items-center text-center py-8">
           <BoxReveal boxColor="hsl(var(--primary))" duration={0.5}>
             <p className="text-[3.5rem] font-semibold py-4">
-              Huonekaluhaku<span className="text-primary">.</span>
+              Kalustehaku<span className="text-primary">.</span>
             </p>
           </BoxReveal>
         </div>
