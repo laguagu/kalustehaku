@@ -28,10 +28,10 @@ export const metadata: Metadata = {
     "https://tavaratrading-embeddings-alyakokeilut.2.rahtiapp.fi",
   ),
   title: "Tavaratrading - Tekoälyhaku",
-  description: "Hae käytettyjä huonekaluja teköälyn avulla",
+  description: "Hae käytettyjä kalusteita teköälyn avulla",
   openGraph: {
     title: "Tavaratrading - Tekoälyhaku",
-    description: "Tekoälyn avulla huonekaluja",
+    description: "Tekoälyn avulla kalusteita",
     images: ["/android-chrome-512x512.png"],
   },
   icons: {

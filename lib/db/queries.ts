@@ -12,9 +12,12 @@ function formatPrice(price: number | null): string | null {
   return price.toFixed(2);
 }
 
+// Käytä test_products taulua kun haluat testata:
+const tableToUse = products; // tai products tuotantokäyttöön
+
 // Prepare product data for database. Generate embedding and search terms
 export async function prepareProductForDB(
-  product: ProductWithMetadata,
+  product: ProductWithMetadata
 ): Promise<PreparedProduct> {
   let embedding = null;
   try {
@@ -22,7 +25,7 @@ export async function prepareProductForDB(
   } catch (error) {
     console.warn(
       `Warning: Failed to generate embedding for ${product.id}:`,
-      error,
+      error
     );
   }
 
@@ -41,38 +44,38 @@ export async function prepareProductForDB(
 export async function upsertProduct(preparedProduct: PreparedProduct) {
   const existing = await db.query.products.findFirst({
     where: and(
-      eq(products.id, preparedProduct.id),
-      eq(products.company, preparedProduct.company),
+      eq(tableToUse.id, preparedProduct.id),
+      eq(tableToUse.company, preparedProduct.company)
     ),
   });
 
   if (!existing) {
-    return await db.insert(products).values(preparedProduct);
+    return await db.insert(tableToUse).values(preparedProduct);
   }
 
   return await db
-    .update(products)
+    .update(tableToUse)
     .set(preparedProduct)
     .where(
       and(
-        eq(products.id, preparedProduct.id),
-        eq(products.company, preparedProduct.company),
-      ),
+        eq(tableToUse.id, preparedProduct.id),
+        eq(tableToUse.company, preparedProduct.company)
+      )
     );
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
   return await db.query.products.findFirst({
-    where: eq(products.id, id),
+    where: eq(tableToUse.id, id),
   });
 }
 
 export async function getProductByIdAndCompany(
   id: string,
-  company: string,
+  company: string
 ): Promise<Product | undefined> {
   return await db.query.products.findFirst({
-    where: and(eq(products.id, id), eq(products.company, company)),
+    where: and(eq(tableToUse.id, id), eq(tableToUse.company, company)),
   });
 }
 
@@ -82,6 +85,6 @@ export async function getAllProducts(): Promise<Product[]> {
 
 export async function deleteProduct(id: string, company: string) {
   return await db
-    .delete(products)
-    .where(and(eq(products.id, id), eq(products.company, company)));
+    .delete(tableToUse)
+    .where(and(eq(tableToUse.id, id), eq(tableToUse.company, company)));
 }
