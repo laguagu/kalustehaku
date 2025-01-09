@@ -34,7 +34,7 @@ export default function SearchForm({
     <div className="relative max-w-3xl mx-auto space-y-4">
       {/* Search Info */}
       <SearchInfo />
-      <Card className="border-0 shadow-lg">
+      <Card className="border-0 shadow-lg outline outline-primary/50 outline-2">
         <CardHeader className="pb-2">
           <CardTitle className="text-xl">Etsi käytettyjä huonekaluja</CardTitle>
           <CardDescription>Kuvaile etsimääsi huonekalua</CardDescription>
@@ -92,7 +92,7 @@ export default function SearchForm({
             transition={{ duration: 0.2 }}
             className="w-full"
           >
-            <Card className="border-0 shadow-lg bg-card">
+            <Card className="border border-primary/20 shadow-lg bg-card ">
               <CardContent className="pt-6">
                 <SearchFilters />
               </CardContent>

@@ -8,6 +8,7 @@
 
 body {
   font-family: var(--font-roboto-condensed), Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
 }
 
 @layer base {

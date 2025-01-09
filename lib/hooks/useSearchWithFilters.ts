@@ -120,7 +120,7 @@ export function useSearchWithFilters() {
       setHasSearched,
       setResults,
       setSearchStates,
-    ]
+    ],
   );
 
   const handleSearch = useCallback(
@@ -133,7 +133,7 @@ export function useSearchWithFilters() {
         });
       }
     },
-    [searchStates, setSearchStates, performSearch, startSearch]
+    [searchStates, setSearchStates, performSearch, startSearch],
   );
 
   useEffect(() => {

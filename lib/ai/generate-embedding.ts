@@ -33,27 +33,27 @@ function generateNaturalDescriptions(metadata: ProductMetadata): string[] {
   // Tyylin kuvaus
   if (metadata.style && metadata.designStyle) {
     descriptions.push(
-      `Tyyliltään huonekalu edustaa ${metadata.style.toLowerCase()} suuntausta ja ${metadata.designStyle.toLowerCase()}.`
+      `Tyyliltään huonekalu edustaa ${metadata.style.toLowerCase()} suuntausta ja ${metadata.designStyle.toLowerCase()}.`,
     );
   }
 
   // Käyttötarkoitus ja sijoitus
   if (metadata.suitableFor.length > 0) {
     descriptions.push(
-      `Soveltuu käytettäväksi: ${metadata.suitableFor.join(", ").toLowerCase()}.`
+      `Soveltuu käytettäväksi: ${metadata.suitableFor.join(", ").toLowerCase()}.`,
     );
   }
 
   if (metadata.roomType.length > 0) {
     descriptions.push(
-      `Suunniteltu käytettäväksi tiloissa: ${metadata.roomType.join(", ").toLowerCase()}.`
+      `Suunniteltu käytettäväksi tiloissa: ${metadata.roomType.join(", ").toLowerCase()}.`,
     );
   }
 
   // Toiminnalliset ominaisuudet
   if (metadata.functionalFeatures.length > 0) {
     descriptions.push(
-      `Huonekalun ominaisuuksiin kuuluu: ${metadata.functionalFeatures.join(", ").toLowerCase()}.`
+      `Huonekalun ominaisuuksiin kuuluu: ${metadata.functionalFeatures.join(", ").toLowerCase()}.`,
     );
   }
 
@@ -69,7 +69,7 @@ function generateNaturalDescriptions(metadata: ProductMetadata): string[] {
 }
 
 export async function generateEmbedding(
-  metadata: ProductMetadata
+  metadata: ProductMetadata,
 ): Promise<number[]> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,

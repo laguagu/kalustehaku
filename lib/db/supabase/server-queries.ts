@@ -13,7 +13,9 @@ export async function searchFurniture(
 ): Promise<[]> {
   const { minSimilarity = 0.42, maxResults = 6, filters = {} } = options;
   try {
-    const embedding = await generateSearchEmbedding(searchQuery);
+    const normalizedQuery = searchQuery.toLowerCase(); // Parantaa hakutulosta koska esim värit ja metadatan arvot ovat pienellä
+    const embedding = await generateSearchEmbedding(normalizedQuery);
+
     const supabase = await createClient();
 
     const { data, error } = await supabase.rpc("match_furnitures_with_filter", {
