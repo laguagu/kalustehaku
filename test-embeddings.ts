@@ -81,7 +81,7 @@ function generateNaturalDescriptions(metadata: ProductMetadata): string[] {
   // Kunto
   descriptions.push(`Huonekalun kunto: ${metadata.condition.toLowerCase()}.`);
 
-  return descriptions;
+  return descriptions.map((desc) => desc.toLowerCase());
 }
 
 async function generateEmbedding(metadata: ProductMetadata): Promise<number[]> {
