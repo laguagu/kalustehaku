@@ -1,11 +1,9 @@
-import { db } from "@/lib/db/drizzle";
-import { products } from "@/lib/db/schema";
 import {
   PipelineResults,
   ProcessedProduct,
   ScrapedProduct,
 } from "@/lib/types/products/types";
-import { and, eq, notInArray } from "drizzle-orm";
+import { findRemovedProducts, removeProducts } from "../db/queries";
 
 interface SyncOptions {
   company: string;
@@ -109,36 +107,32 @@ export async function syncProducts(
     }
 
     // Jos kaikki kategoriat löytyvät, etsi poistettavat tuotteet
-    const removedProducts = await db.query.products.findMany({
-      where: and(
-        eq(products.company, options.company),
-        eq(products.isTestData, options.isTestData || false),
-        notInArray(products.id, scrapedIds),
-      ),
-    });
+    const removedProducts = await findRemovedProducts(
+      options.company,
+      options.isTestData || false,
+      scrapedIds,
+    );
 
     // Poista tuotteet jotka eivät ole enää saatavilla
     if (removedProducts.length > 0) {
       console.log(`Found ${removedProducts.length} products to remove`);
 
-      for (const product of removedProducts) {
-        await db
-          .delete(products)
-          .where(
-            and(
-              eq(products.id, product.id),
-              eq(products.company, options.company),
-            ),
-          );
-
-        syncResults.removedProducts.push({
+      await removeProducts(
+        removedProducts.map((product) => ({
           id: product.id,
           name: product.name,
-          status: "success",
-          action: "deleted",
-          message: "Product no longer available",
-        });
-      }
+        })),
+        options.company,
+      );
+
+      // Lisää poistetut tuotteet tuloksiin
+      syncResults.removedProducts = removedProducts.map((product) => ({
+        id: product.id,
+        name: product.name,
+        status: "success" as const,
+        action: "deleted" as const,
+        message: "Product no longer available",
+      }));
 
       console.log(`Successfully removed ${removedProducts.length} products`);
     } else {

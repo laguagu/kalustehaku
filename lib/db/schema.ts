@@ -35,6 +35,10 @@ export const products = pgTable(
   },
   (table) => [uniqueIndex("unique_product_source").on(table.id, table.company)],
 );
+
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;
+
 // Test products table
 export const test_products = pgTable(
   "test_products",
@@ -57,8 +61,10 @@ export const test_products = pgTable(
     createdAt: timestamp("created_at").default(sql`NOW()`),
     updatedAt: timestamp("updated_at").default(sql`NOW()`),
   },
-  (table) => [uniqueIndex("unique_test_product_source").on(table.id, table.company)],
+  (table) => [
+    uniqueIndex("unique_test_product_source").on(table.id, table.company),
+  ],
 );
 
-export type Product = typeof products.$inferSelect;
-export type NewProduct = typeof products.$inferInsert;
+export type TestProduct = typeof test_products.$inferSelect;
+export type NewTestProduct = typeof test_products.$inferInsert;

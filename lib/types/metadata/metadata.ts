@@ -138,7 +138,7 @@ export const FurnitureMetadataSchema = z.object({
   brand: z
     .string()
     .describe(
-      "Pyri tunnistamaan valmistaja tai brändi tuotteen nimestä, kuvauksesta tai muista tiedoista. Jätä tyhjäksi jos et ole varma."
+      "Pyri tunnistamaan valmistaja tai brändi tuotteen nimestä, kuvauksesta tai muista tiedoista. Jätä tyhjäksi jos et ole varma.",
     ),
   category: FurnitureCategoryEnum.describe("Tuotekategoria"),
   mainGategory: FurnitureMainCategoryEnum.describe("Pääkategoria)"),
@@ -155,7 +155,7 @@ export const FurnitureMetadataSchema = z.object({
   visualDescription: z
     .string()
     .describe(
-      "Yksityiskohtainen visuaalinen kuvaus huonekalusta semanttista hakua varten. Sisällytä selkeästi: 1) päävärit ja niiden sävyt, 2) huonekalun tyyppi/kategoria, 3) muoto ja rakenne, 4) materiaalit ja pintakäsittelyt. Esimerkki: 'Mattavalkoinen puinen ruokapöydän tuoli, jossa on korkeahko selkänoja ja pehmustettu istuinosa. Tuolin jalat ovat vaaleaa tammea ja verhoilu on tehty valkoisella tekstiilillä.' Mainitse aina värit ja kalustekategoria ensimmäisenä hakuosuvuuden parantamiseksi."
+      "Yksityiskohtainen visuaalinen kuvaus huonekalusta semanttista hakua varten. Sisällytä selkeästi: 1) päävärit ja niiden sävyt, 2) huonekalun tyyppi/kategoria, 3) muoto ja rakenne, 4) materiaalit ja pintakäsittelyt. Esimerkki: 'Mattavalkoinen puinen ruokapöydän tuoli, jossa on korkeahko selkänoja ja pehmustettu istuinosa. Tuolin jalat ovat vaaleaa tammea ja verhoilu on tehty valkoisella tekstiilillä.' Mainitse aina värit ja kalustekategoria ensimmäisenä hakuosuvuuden parantamiseksi.",
     ),
 });
 

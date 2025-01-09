@@ -15,8 +15,8 @@ async function getImageAsBase64(imageUrl: string): Promise<string | null> {
       responseType: "arraybuffer",
     });
     return Buffer.from(response.data).toString("base64");
-  } catch (error) {
-    console.error("Error fetching image:", error);
+  } catch {
+    console.log(`Kuva puuttuu URL:sta: ${imageUrl}`);
     return null;
   }
 }

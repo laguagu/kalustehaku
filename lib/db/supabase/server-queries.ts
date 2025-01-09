@@ -2,6 +2,7 @@
 import { generateSearchEmbedding } from "@/app/(ai)/actions";
 import { createClient } from "@/lib/db/supabase/server-client";
 import { ProductMetadata } from "@/lib/types/metadata/metadata";
+import { dbConfig } from "../config";
 
 export async function searchFurniture(
   searchQuery: string,
@@ -13,12 +14,14 @@ export async function searchFurniture(
 ): Promise<[]> {
   const { minSimilarity = 0.42, maxResults = 6, filters = {} } = options;
   try {
-    const normalizedQuery = searchQuery.toLowerCase(); // Parantaa hakutulosta koska esim värit ja metadatan arvot ovat pienellä
+    const normalizedQuery = searchQuery.toLowerCase(); // toLowerCase() koska vertailtava data on pienellä kirjoitettua myös. Parantaa hakutulosta.
     const embedding = await generateSearchEmbedding(normalizedQuery);
 
     const supabase = await createClient();
 
-    const { data, error } = await supabase.rpc("match_furnitures_with_filter", {
+    const matchFunction = dbConfig.getMatchFunction();
+
+    const { data, error } = await supabase.rpc(matchFunction, {
       query_embedding: embedding,
       match_threshold: minSimilarity,
       match_count: maxResults,

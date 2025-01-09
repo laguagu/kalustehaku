@@ -236,7 +236,7 @@ export async function scrapeProducts(
               })
               .catch(() => "");
 
-            const bigImageUrl = convertToBigImageUrl(imageUrl);
+            const bigImageUrl = imageUrl ? convertToBigImageUrl(imageUrl) : "";
 
             return {
               id:

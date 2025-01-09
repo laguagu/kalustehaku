@@ -37,22 +37,10 @@ cd tavaratrading-embeddings
 npm install
 ```
 
-3. Kopioi ympäristömuuttujat:
+3. Aseta ympäristömuuttujat:
 
 ```bash
 cp .env.example .env.local
-```
-
-4. Täytä seuraavat ympäristömuuttujat .env.local tiedostoon:
-
-```env
-OPENAI_API_KEY=            # OpenAI API avain
-SUPABASE_PRIVATE_KEY=      # Supabase private key
-NEXT_PUBLIC_SUPABASE_URL=  # Supabase projektin URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY= # Supabase anon key
-SCRAPER_USERNAME=          # Web scraping API:n käyttäjätunnus (Määrittele käyttäjänimi)
-SCRAPER_PASSWORD=          # Web scraping API:n salasana (Määrittele salasana)
-DATABASE_URL=              # PostgreSQL yhteysosoite
 ```
 
 ## Supabase asetukset
@@ -61,7 +49,7 @@ Supabase ympäristömuuttujat saat haettua kun olet luonut projektin [Supabase](
 
 ![Supabase ympäristömuuttujat](./public/supabase.png)
 
-Tarvittavat ympäristömuuttujat:
+Tarvittavat ympäristömuuttujat Supabasen "Project Settings" valikosta:
 
 - `DATABASE_URL`: Löytyy kohdasta "Database" -> "Connection string"
 - `SUPABASE_PRIVATE_KEY` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Löytyy kohdasta "API" -> "anon/public"
@@ -77,23 +65,44 @@ npm run dev
 
 2. Avaa [http://localhost:3000](http://localhost:3000)
 
-## Tietokannan alustus (ellei ole tehty)
+# Tietokannan alustus (ellei ole tehty)
 
-### 1. PostgreSQL Laajennukset ja Indeksit
+### 1. Drizzle migraatiot
+
+1. Luo tietokantamigraatiot ja/tai pushaa schema muutokset:
+
+```bash
+# Luo migraatiotiedostot
+npm run db:generate
+
+# Aja migraatiot
+npm run db:migrate
+
+# TAI pushaa schema muutokset suoraan (kehitysympäristössä)
+npm run db:push
+```
+
+2. (Valinnainen) Käynnistä Drizzle Studio tietokannan hallintaan:
+
+```bash
+npm run db:studio
+```
+
+### 2. PostgreSQL Laajennukset ja Indeksit
 
 Supabasessa täytyy ensin luoda tarvittavat laajennukset ja indeksit:
+
+**Avaa SQL-Editor**
+
+Aja seuraava SQL loitsu editorissa. Tämä luo funktion semanttista hakua varten, sekä indeksin.
 
 ```sql
 -- Vektorilaajennuksen aktivointi
 create extension if not exists vector;
 
--- HNSW-indeksi nopeaa vektorihakua varten
-CREATE INDEX IF NOT EXISTS embeddingIndex
-ON products
-USING hnsw (embedding vector_cosine_ops);
+DROP FUNCTION IF EXISTS test_match_furnitures_with_filter(vector,double precision,integer,jsonb);
 
--- Funktio semanttista hakua varten
-CREATE OR REPLACE FUNCTION match_furnitures_with_filter (
+CREATE OR REPLACE FUNCTION test_match_furnitures_with_filter (
   query_embedding vector(1536),
   match_threshold float,
   match_count int,
@@ -107,7 +116,8 @@ RETURNS TABLE (
   product_url text,
   condition text,
   metadata jsonb,
-  similarity float
+  similarity float,
+  company text
 )
 LANGUAGE plpgsql AS $$
 DECLARE
@@ -116,21 +126,22 @@ DECLARE
 BEGIN
   RETURN QUERY
   SELECT
-    products.id,
-    products.name,
-    products.price::decimal,
-    products.image_url,
-    products.product_url,
-    products.condition,
-    products.metadata,
-    1 - (products.embedding <=> query_embedding) as similarity
-  FROM products
-  WHERE 1 - (products.embedding <=> query_embedding) > match_threshold
+    test_products.id,
+    test_products.name,
+    test_products.price::decimal,
+    test_products.image_url,
+    test_products.product_url,
+    test_products.condition,
+    test_products.metadata,
+    1 - (test_products.embedding <=> query_embedding) as similarity,
+    test_products.company
+  FROM test_products
+  WHERE 1 - (test_products.embedding <=> query_embedding) > match_threshold
     AND (
       filter = '{}'::jsonb
       OR (
         -- Tarkista muut metadata-kentät paitsi värit
-            products.metadata @> metadata_filter
+            test_products.metadata @> metadata_filter
         AND
         -- Tarkista värit: palauta true jos yksikin väri täsmää
         (
@@ -139,7 +150,7 @@ BEGIN
             SELECT 1
             FROM jsonb_array_elements_text(color_filter) AS filter_color
             WHERE filter_color IN (
-              SELECT jsonb_array_elements_text(products.metadata -> 'colors')
+              SELECT jsonb_array_elements_text(test_products.metadata -> 'colors')
             )
           )
         )
@@ -149,26 +160,8 @@ BEGIN
   LIMIT match_count;
 END;
 $$;
-```
 
-### 2. Drizzle migraatiot
-
-1. Luo tietokantamigraatiot:
-
-```bash
-npm run db:generate
-```
-
-2. Aja migraatiot:
-
-```bash
-npm run db:migrate
-```
-
-3. (Valinnainen) Käynnistä Drizzle Studio tietokannan hallintaan:
-
-```bash
-npm run db:studio
+create index idx_test_products_metadata on test_products using gin (metadata);
 ```
 
 ### Web Scraping
@@ -230,7 +223,7 @@ Sovellus käyttää PostgreSQL:ää pgvector-laajennuksella vektorihakuun. Tieto
 
 ```typescript
 export const products = pgTable(
-  "products",
+  "test_products", // Käytetään testi taulua, koska saatu parempia tuloksia tällä. ( Erillainen embedding arvo. Paranneltu generateEmbedding funktiota ja skeeman kuvauksia verrattuna products tauluun )
   {
     uniqueId: uuid("unique_id").defaultRandom().primaryKey(),
     id: text("id").notNull(),
@@ -244,17 +237,43 @@ export const products = pgTable(
     availability: text("availability"),
     company: text("company").notNull(),
     isTestData: boolean("is_test_data").default(false),
-    metadata: jsonb("metadata").$type<ProductMetadata>().notNull(),
+    metadata: jsonb("metadata").$type<ProductMetadata>().notNull(), // GPT-4o generoi tämän scheman perusteella.
     embedding: vector("embedding", { dimensions: 1536 }),
     searchTerms: text("search_terms"),
     createdAt: timestamp("created_at").default(sql`NOW()`),
     updatedAt: timestamp("updated_at").default(sql`NOW()`),
   },
-  (table) => [uniqueIndex("unique_product_source").on(table.id, table.company)]
+  (table) => [uniqueIndex("unique_product_source").on(table.id, table.company)],
 );
 ```
 
-**HUOM!** Käytössä on myös test_products. Määrittele db/queries.ts kumpi taulu on käytössä kohdassa tableToUse.
+### Huomioita tietokannoista:
+
+Sovellus tukee kahta tietokantaa: tuotanto- ja testitietokantaa. Tietokannan voi vaihtaa muokkaamalla `lib/db/config.ts` tiedostoa:
+
+```typescript
+export const dbConfig = {
+  useTestDb: true, // true = test_products, false = products
+  getTable() {
+    return this.useTestDb ? test_products : products;
+  },
+  getQueryHelper() {
+    return this.useTestDb ? db.query.test_products : db.query.products;
+  },
+  getMatchFunction() {
+    return this.useTestDb
+      ? "test_match_furnitures_with_filter"
+      : "match_furnitures_with_filter";
+  },
+};
+```
+
+- Tällä hetkellä käytössä on test_products taulu, koska sen avulla on saatu parempia tuloksia semanttisessa haussa
+- Vaihto vaikuttaa sekä:
+  - Drizzle ORM:n käyttämään tauluun (products/test_products)
+  - Supabasen RPC-funktioon (match_furnitures_with_filter/test_match_furnitures_with_filter)
+- Molemmat tietokannat käyttävät saman tyyppistä skeemaa, vain taulun nimi ja funktiot vaihtuvat.
+- Mikäli halutaan vaihtaa taulua product tauluun joudutaan luomaan myös Supabaseen uusi funktio korvaamaan test_match_furnitures_with_filter jossa vaihdetaan kentät test_products -> products
 
 ### Tärkeimmät kentät:
 
@@ -279,9 +298,9 @@ export default function TavaraTradingSearch() {
   async function handleSearch(formData: FormData) {
     const searchQuery = formData.get("query") as string;
     const searchResults = await searchFurniture(searchQuery, {
-      minSimilarity: 0.25,
-      maxResults: 6,
-      filters: {},
+      minSimilarity: 0.25, // Alla tämän arvon olevat tulokset eivät tule mukaan
+      maxResults: 6, // Montako tuotetta näytetään
+      filters: {}, // Filtteröintiin mitkä annetaan match_furnitures_with_filter funktiolle mahdolliseen suodatukseen.
     });
     // ...
   }
@@ -293,14 +312,14 @@ export default function TavaraTradingSearch() {
 ```typescript
 // app/actions.ts
 export async function generateSearchEmbedding(
-  searchText: string
+  searchText: string, // Käyttäjän hakusana
 ): Promise<number[]> {
   const response = await openai.embeddings.create({
-    model: "text-embedding-3-small",
+    model: "text-embedding-3-small", // OpenAI embedding malli
     input: searchText,
     encoding_format: "float",
   });
-  return response.data[0].embedding;
+  return response.data[0].embedding; // Vektori
 }
 ```
 
@@ -312,10 +331,10 @@ export async function searchFurniture(
   options: {
     minSimilarity?: number;
     maxResults?: number;
-  } = {}
+  } = {},
 ) {
   const embedding = await generateSearchEmbedding(searchQuery);
-  const { data } = await supabase.rpc("match_furniture", {
+  const { data } = await supabase.rpc("match_furnitures_with_filter", {
     query_embedding: embedding,
     match_threshold: minSimilarity,
     match_count: maxResults,

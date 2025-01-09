@@ -1,19 +1,49 @@
-// lib/scrapers/shared/base-pipeline.ts
-import {
-  getProductByIdAndCompany,
-  prepareProductForDB,
-  upsertProduct,
-} from "@/lib/db/queries";
+import { getProductByIdAndCompany, upsertProduct } from "@/lib/db/queries";
 import {
   PipelineConfig,
   PipelineResults,
+  PreparedProduct,
   ProductWithMetadata,
   ScrapedProduct,
   ScraperConfig,
 } from "@/lib/types/products/types";
 import pLimit from "p-limit";
+import { generateEmbedding } from "../ai/generate-embedding";
 import { generateFurnitureMetadata } from "../ai/product-analyzer";
+import { generateSearchTerms } from "../utils";
 import { syncProducts } from "./sync-products";
+
+// Helper to convert number to decimal string
+function formatPrice(price: number | null): string | null {
+  if (price === null) return null;
+  return price.toFixed(2);
+}
+
+// Prepare product data for database. Generate embedding and search terms
+export async function prepareProductForDB(
+  product: ProductWithMetadata,
+): Promise<PreparedProduct> {
+  let embedding = null;
+  try {
+    embedding = await generateEmbedding(product.metadata);
+  } catch (error) {
+    console.warn(
+      `Warning: Failed to generate embedding for ${product.id}:`,
+      error,
+    );
+  }
+
+  const searchTerms = generateSearchTerms(product.metadata);
+
+  return {
+    ...product,
+    price: formatPrice(product.price),
+    embedding,
+    searchTerms,
+    updatedAt: new Date(),
+    isTestData: product.isTestData,
+  };
+}
 
 const MAX_CONCURRENT_URLS = 2;
 const MAX_CONCURRENT_PRODUCTS = 13;
