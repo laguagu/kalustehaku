@@ -1,0 +1,4 @@
+*.yaml
+*.yml
+k8s/*
+kubernetes/*

@@ -1,0 +1,32 @@
+# scraper-manual.yaml wiht simplified envs implementation NOTICE <SET_THIS_ON_RAHTI>
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: scraper-test-manual-9-1-2025
+  namespace: alyakokeilut
+spec:
+  parallelism: 1
+  completions: 1
+  backoffLimit: 6
+  template:
+    spec:
+      containers:
+        - name: scraper-trigger
+          image: "curlimages/curl:latest"
+          args:
+            - /bin/sh
+            - "-c"
+            - |
+              curl -v -X POST \
+              --max-time 500 \
+              --retry 3 \
+              --retry-delay 5 \
+              -H "Authorization: Basic $(echo -n ${SCRAPER_USERNAME}:${SCRAPER_PASSWORD} | base64)" \
+              http://172.30.41.141:3000/api/cron
+          env:
+            - name: SCRAPER_USERNAME
+              value: <SET_THIS_ON_RAHTI>
+            - name: SCRAPER_PASSWORD
+              value: <SET_THIS_ON_RAHTI>
+          imagePullPolicy: Always
+      restartPolicy: Never

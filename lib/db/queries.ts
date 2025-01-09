@@ -14,7 +14,7 @@ function formatPrice(price: number | null): string | null {
 
 // Prepare product data for database. Generate embedding and search terms
 export async function prepareProductForDB(
-  product: ProductWithMetadata
+  product: ProductWithMetadata,
 ): Promise<PreparedProduct> {
   let embedding = null;
   try {
@@ -22,7 +22,7 @@ export async function prepareProductForDB(
   } catch (error) {
     console.warn(
       `Warning: Failed to generate embedding for ${product.id}:`,
-      error
+      error,
     );
   }
 
@@ -42,7 +42,7 @@ export async function upsertProduct(preparedProduct: PreparedProduct) {
   const existing = await db.query.products.findFirst({
     where: and(
       eq(products.id, preparedProduct.id),
-      eq(products.company, preparedProduct.company)
+      eq(products.company, preparedProduct.company),
     ),
   });
 
@@ -56,8 +56,8 @@ export async function upsertProduct(preparedProduct: PreparedProduct) {
     .where(
       and(
         eq(products.id, preparedProduct.id),
-        eq(products.company, preparedProduct.company)
-      )
+        eq(products.company, preparedProduct.company),
+      ),
     );
 }
 
@@ -69,7 +69,7 @@ export async function getProductById(id: string): Promise<Product | undefined> {
 
 export async function getProductByIdAndCompany(
   id: string,
-  company: string
+  company: string,
 ): Promise<Product | undefined> {
   return await db.query.products.findFirst({
     where: and(eq(products.id, id), eq(products.company, company)),
