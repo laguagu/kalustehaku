@@ -26,12 +26,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     "https://tavaratrading-embeddings-alyakokeilut.2.rahtiapp.fi",
   ),
-  title: "Tavaratrading - Tekoälyhaku",
+  title: "Kalustehaku - Tekoälyhaku",
   description: "Hae käytettyjä kalusteita teköälyn avulla",
   openGraph: {
-    title: "Tavaratrading - Tekoälyhaku",
-    description: "Tekoälyn avulla kalusteita",
-    images: ["/android-chrome-512x512.png"],
+    title: "Kalustehaku - Tekoälyhaku",
+    description: "Älyä-hankkeen - Älykäs kalustehaku käytetyille huonekaluille",
+    images: ["/kalustehaku.png"],
   },
   icons: {
     icon: "/favicon.ico",
