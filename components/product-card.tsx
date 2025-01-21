@@ -32,7 +32,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         "bg-background/80 backdrop-blur-sm hover:bg-background ",
         isBestMatch
           ? "ring-2 ring-primary shadow-md"
-          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md"
+          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md",
       )}
     >
       <Link

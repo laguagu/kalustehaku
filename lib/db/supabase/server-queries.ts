@@ -14,7 +14,7 @@ export async function searchFurniture(
     minSimilarity?: number;
     maxResults?: number;
     filters?: Partial<ProductMetadata>;
-  } = {}
+  } = {},
 ): Promise<SupabaseProduct[]> {
   const { minSimilarity = 0.38, maxResults = 6, filters = {} } = options;
 
@@ -60,13 +60,10 @@ export async function searchFurniture(
     const retriever = BM25Retriever.fromDocuments(documents, { k: maxResults });
     const rerankedDocs = await retriever.invoke(normalizedQuery);
 
-    
     // 5. Convert from BM25 doc -> your SupabaseProduct shape
     const reRankedResults = rerankedDocs.map(
-      (doc) => doc.metadata as SupabaseProduct
+      (doc) => doc.metadata as SupabaseProduct,
     );
-    console.log("reRankedResults", reRankedResults);
-    
     return reRankedResults;
   } catch (error) {
     console.error("Search failed:", error);
