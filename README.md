@@ -425,6 +425,6 @@ Sovelluksen tai uuden version vieminen Rahtiin onnistuu seuraamalla [pushToRahti
 
 ## Kehitysideoita
 
-Generoi embedding arvot eri embedding llm malleilla. Tässä hetkellä siis käytössä OpenAI mallit.
+Generoi embedding arvot eri embedding llm malleilla ja vertaile. Tässä hetkellä siis käytössä OpenAI mallit.
 Käytä reranking llm mallia tulosten järjestykseen. ("Tämä luultavasti paras vaihtoehto ja helpoin tehdä")
 
