@@ -6,6 +6,7 @@ import {
   FurnitureMaterialEnum,
   ProductMetadata,
 } from "../types/metadata/metadata";
+import { SupabaseProduct } from "../types/search/types";
 import {
   cleanFilters,
   expandColorGroups,
@@ -97,11 +98,13 @@ export function useSearchWithFilters() {
         const cleanedFilters = cleanFilters(filters);
 
         try {
-          const searchResults = await searchFurniture(query, {
-            minSimilarity: 0.42,
-            maxResults: 6,
-            ...(cleanedFilters && { filters: cleanedFilters }),
-          });
+          const searchResults: SupabaseProduct[] = await searchFurniture(
+            query,
+            {
+              minSimilarity: 0.42,
+              ...(cleanedFilters && { filters: cleanedFilters }),
+            }
+          );
           setResults(searchResults);
           setError(null);
         } catch (err) {
@@ -120,7 +123,7 @@ export function useSearchWithFilters() {
       setHasSearched,
       setResults,
       setSearchStates,
-    ],
+    ]
   );
 
   const handleSearch = useCallback(
@@ -133,7 +136,7 @@ export function useSearchWithFilters() {
         });
       }
     },
-    [searchStates, setSearchStates, performSearch, startSearch],
+    [searchStates, setSearchStates, performSearch, startSearch]
   );
 
   useEffect(() => {

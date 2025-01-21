@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Indicate that these packages should not be bundled by webpack
+  // serverExternalPackages: ["onnxruntime-node"],
   output: "standalone",
 };
 

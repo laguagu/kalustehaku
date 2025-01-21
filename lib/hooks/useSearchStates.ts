@@ -1,6 +1,6 @@
 import { parseAsString, useQueryStates } from "nuqs";
 import { useState, useTransition } from "react";
-import { SearchResult } from "../types/search/types";
+import { SupabaseProduct } from "../types/search/types";
 
 export function useSearchStates() {
   const [searchStates, setSearchStates] = useQueryStates({
@@ -11,7 +11,7 @@ export function useSearchStates() {
     ai: parseAsString.withDefault(""),
   });
 
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<SupabaseProduct[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoading, startSearch] = useTransition();

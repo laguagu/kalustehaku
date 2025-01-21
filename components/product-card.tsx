@@ -1,4 +1,4 @@
-import { SearchResult } from "@/lib/types/search/types";
+import { SupabaseProduct } from "@/lib/types/search/types";
 import { cn } from "@/lib/utils";
 import { COLOR_HEX_MAP } from "@/lib/utils/filters-colors";
 import Image from "next/image";
@@ -8,7 +8,7 @@ import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
 
 interface ProductCardProps {
-  result: SearchResult;
+  result: SupabaseProduct;
   isBestMatch?: boolean;
 }
 
@@ -32,7 +32,7 @@ export function ProductCard({ result, isBestMatch }: ProductCardProps) {
         "bg-background/80 backdrop-blur-sm hover:bg-background ",
         isBestMatch
           ? "ring-2 ring-primary shadow-md"
-          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md",
+          : "border-2 hover:border-primary/50 shadow-sm hover:shadow-md"
       )}
     >
       <Link
