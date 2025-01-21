@@ -422,3 +422,9 @@ MIT License - katso [LICENCE](LICENCE) tiedosto lisätietoja varten.
 ## Sovelluksen vieminen Rahtiin
 
 Sovelluksen tai uuden version vieminen Rahtiin onnistuu seuraamalla [pushToRahti.txt](../lib/docs/pushToRahti.txt) tiedostossa olevia ohjeita. Tiedosto sisältää tarvittavat komennot ja vaiheet, jotka tulee suorittaa mikäli uuden lokaalin version haluaa viedä Rahti 2 palveluun.
+
+## Kehitysideoita
+
+Generoi embedding arvot eri embedding llm malleilla. Tässä hetkellä siis käytössä OpenAI mallit.
+Käytä reranking llm mallia tulosten järjestykseen. ("Tämä luultavasti paras vaihtoehto ja helpoin tehdä")
+
