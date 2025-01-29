@@ -58,7 +58,7 @@ export default function TavaraTradingSearch() {
             <div className="hidden md:flex justify-between items-center mb-6">
               <div className="space-y-2">
                 <h2 className="text-2xl font-semibold text-gray-900">
-                  Löydetyt käytetyt huonekalut
+                  Löydetyt käytetyt kalusteet
                 </h2>
                 <p className="text-sm text-gray-500">
                   Hakusanasi parhaiten vastaavat tuotteet ({results.length}{" "}
