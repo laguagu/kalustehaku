@@ -90,6 +90,8 @@ npm run db:studio
 
 ### 2. PostgreSQL Laajennukset ja Indeksit
 
+**TIP:** Lyhyt video jossa kerrattuna Supabase ja pgvector käyttö [Using OpenAI embeddings on Supabase database](https://www.youtube.com/watch?v=pG95GO0Kcxs)
+
 Supabasessa täytyy ensin luoda tarvittavat laajennukset ja indeksit:
 
 **Avaa SQL-Editor**
